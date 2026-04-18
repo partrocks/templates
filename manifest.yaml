@@ -1,0 +1,7 @@
+version: 1
+
+templates: []
+
+metadata:
+  name: "PartRocks Community Catalog"
+  description: "A catalog of community templates for PartRocks"

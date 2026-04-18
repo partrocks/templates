@@ -1,1 +1,1 @@
-# templates
+# community templates

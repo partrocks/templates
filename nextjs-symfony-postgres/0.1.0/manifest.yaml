@@ -1,0 +1,290 @@
+schemaVersion: 2
+
+manifest:
+    id: partrocks/nextjs-symfony-postgres
+    name: Next.js + Symfony API Platform + Postgres
+    version: "0.1.0"
+    description: >-
+        Next.js web frontend plus a PHP Symfony / API Platform API sharing a
+        Postgres database. Both apps host on EC2; develop runs in Docker.
+
+# ---------------------------------------------------------------------------
+# Options — caller-tunable knobs. Only {{ options.* }} substitution is
+# supported anywhere in this file.
+# ---------------------------------------------------------------------------
+options:
+    projectSlug:
+        id: projectSlug
+        label: Project slug
+        type: string
+        required: true
+        default: my-app
+
+    databaseName:
+        id: databaseName
+        label: Postgres database name
+        type: string
+        required: false
+        default: app
+
+    databaseUser:
+        id: databaseUser
+        label: Postgres user (develop only)
+        type: string
+        required: false
+        default: app
+
+    databasePassword:
+        id: databasePassword
+        label: Postgres password (develop only)
+        type: string
+        required: false
+        default: app
+
+# ---------------------------------------------------------------------------
+# declare.resources — inventory of template-shipped files. Every copy.from
+# below must appear here; every entry here must exist on disk under
+# <template-root>/resources/.
+# ---------------------------------------------------------------------------
+declare:
+    resources:
+        # Next.js web
+        - resources/web/package.json
+        - resources/web/next.config.mjs
+        - resources/web/tsconfig.json
+        - resources/web/app/layout.tsx
+        - resources/web/app/page.tsx
+        - resources/web/.gitignore
+        # Symfony + API Platform
+        - resources/api/composer.json
+        - resources/api/public/index.php
+        - resources/api/bin/console
+        - resources/api/src/Kernel.php
+        - resources/api/src/Entity/Greeting.php
+        - resources/api/config/bundles.php
+        - resources/api/config/preload.php
+        - resources/api/config/services.yaml
+        - resources/api/config/packages/framework.yaml
+        - resources/api/config/packages/api_platform.yaml
+        - resources/api/config/packages/doctrine.yaml
+        - resources/api/config/packages/routing.yaml
+        - resources/api/config/routes/api_platform.yaml
+        - resources/api/.env
+        - resources/api/.gitignore
+
+# ---------------------------------------------------------------------------
+# codebases — two: a Next.js frontend (web) and a Symfony API (api).
+# ---------------------------------------------------------------------------
+codebases:
+    web:
+        path: ./apps/web
+        build:
+            baseImage: node:20-bookworm
+            dependencies:
+                - npm
+            steps:
+                - id: scaffold-package-json
+                  copy:
+                      from: resources/web/package.json
+                      to: /workspace/package.json
+                - id: scaffold-next-config
+                  copy:
+                      from: resources/web/next.config.mjs
+                      to: /workspace/next.config.mjs
+                - id: scaffold-tsconfig
+                  copy:
+                      from: resources/web/tsconfig.json
+                      to: /workspace/tsconfig.json
+                - id: scaffold-layout
+                  copy:
+                      from: resources/web/app/layout.tsx
+                      to: /workspace/app/layout.tsx
+                - id: scaffold-page
+                  copy:
+                      from: resources/web/app/page.tsx
+                      to: /workspace/app/page.tsx
+                - id: scaffold-gitignore
+                  copy:
+                      from: resources/web/.gitignore
+                      to: /workspace/.gitignore
+                - id: install
+                  run: npm install
+                - id: build
+                  run: npm run build
+            workingPath: /workspace
+            outputPath: /workspace/.next
+
+    api:
+        path: ./apps/api
+        build:
+            baseImage: php:8.3-cli-bookworm
+            dependencies:
+                - composer
+            steps:
+                - id: scaffold-composer-json
+                  copy:
+                      from: resources/api/composer.json
+                      to: /workspace/composer.json
+                - id: scaffold-front-controller
+                  copy:
+                      from: resources/api/public/index.php
+                      to: /workspace/public/index.php
+                - id: scaffold-console
+                  copy:
+                      from: resources/api/bin/console
+                      to: /workspace/bin/console
+                - id: scaffold-kernel
+                  copy:
+                      from: resources/api/src/Kernel.php
+                      to: /workspace/src/Kernel.php
+                - id: scaffold-entity-greeting
+                  copy:
+                      from: resources/api/src/Entity/Greeting.php
+                      to: /workspace/src/Entity/Greeting.php
+                - id: scaffold-bundles
+                  copy:
+                      from: resources/api/config/bundles.php
+                      to: /workspace/config/bundles.php
+                - id: scaffold-preload
+                  copy:
+                      from: resources/api/config/preload.php
+                      to: /workspace/config/preload.php
+                - id: scaffold-services
+                  copy:
+                      from: resources/api/config/services.yaml
+                      to: /workspace/config/services.yaml
+                - id: scaffold-framework
+                  copy:
+                      from: resources/api/config/packages/framework.yaml
+                      to: /workspace/config/packages/framework.yaml
+                - id: scaffold-api-platform
+                  copy:
+                      from: resources/api/config/packages/api_platform.yaml
+                      to: /workspace/config/packages/api_platform.yaml
+                - id: scaffold-doctrine
+                  copy:
+                      from: resources/api/config/packages/doctrine.yaml
+                      to: /workspace/config/packages/doctrine.yaml
+                - id: scaffold-routing
+                  copy:
+                      from: resources/api/config/packages/routing.yaml
+                      to: /workspace/config/packages/routing.yaml
+                - id: scaffold-routes-api
+                  copy:
+                      from: resources/api/config/routes/api_platform.yaml
+                      to: /workspace/config/routes/api_platform.yaml
+                - id: scaffold-env
+                  copy:
+                      from: resources/api/.env
+                      to: /workspace/.env
+                - id: scaffold-gitignore
+                  copy:
+                      from: resources/api/.gitignore
+                      to: /workspace/.gitignore
+                - id: install
+                  run: composer install --no-interaction --prefer-dist --no-progress
+                - id: warmup
+                  run: php bin/console cache:warmup --env=prod
+            workingPath: /workspace
+            outputPath: /workspace
+
+# ---------------------------------------------------------------------------
+# environments — develop (Docker) + cloud topology (EC2 + Postgres).
+# ---------------------------------------------------------------------------
+environments:
+    develop:
+        type: docker
+        docker:
+            services:
+                - name: web
+                  image: node:20-bookworm
+                - name: api
+                  image: php:8.3-cli-bookworm
+                - name: db
+                  image: postgres:16
+            # Host-published ports: 3000 = Next.js dev, 8000 = Symfony dev,
+            # 5432 = Postgres exposed for local tooling.
+            ports:
+                - 3000
+                - 8000
+                - 5432
+            mounts:
+                # Postgres data volume — kept outside ./apps so it never
+                # overlaps a codebase path.
+                - source: ./data/postgres
+                  target: /var/lib/postgresql/data
+        codebases:
+            web:
+                env:
+                    - name: NODE_ENV
+                      value: development
+                    # The web app only talks to the API over HTTP — it does
+                    # NOT hold DATABASE_URL. Postgres is shared via the API.
+                    - name: NEXT_PUBLIC_API_URL
+                      value: http://localhost:8000
+                    - name: APP_NAME
+                      value: "{{ options.projectSlug }}"
+            api:
+                env:
+                    - name: APP_ENV
+                      value: dev
+                    - name: APP_NAME
+                      value: "{{ options.projectSlug }}"
+                    # The API is the only codebase that owns DATABASE_URL.
+                    # Develop uses the local docker `db` service; production
+                    # uses the cloud `primary-db` slot output below.
+                    - name: DATABASE_URL
+                      value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@db:5432/{{ options.databaseName }}?serverVersion=16&charset=utf8"
+                    - name: APP_SECRET
+                      fromSecret: api_app_secret
+
+    cloud:
+        slots:
+            # Non-hosting slot: Postgres. Exposes `connectionString` output
+            # consumed by the api hosting slot. No codebaseId, no env.
+            primary-db:
+                type: database
+                allowed:
+                    - aws::database::postgres
+
+            # API host — EC2 single-instance. Attaches to the database so
+            # deploy order is primary-db → api-host. DATABASE_URL is the
+            # env var the user explicitly asked for.
+            api-host:
+                type: hosting
+                codebaseId: api
+                allowed:
+                    - aws::hosting::ec2-single
+                attachesTo:
+                    - primary-db
+                env:
+                    - name: APP_ENV
+                      value: prod
+                    - name: APP_NAME
+                      value: "{{ options.projectSlug }}"
+                    - name: DATABASE_URL
+                      from:
+                          slot: primary-db
+                          output: connectionString
+                    - name: APP_SECRET
+                      fromSecret: api_app_secret
+
+            # Web host — EC2 single-instance. Attaches to the API so the
+            # public URL resolves after the API is up. Web never sees
+            # DATABASE_URL; only NEXT_PUBLIC_API_URL.
+            web-host:
+                type: hosting
+                codebaseId: web
+                allowed:
+                    - aws::hosting::ec2-single
+                attachesTo:
+                    - api-host
+                env:
+                    - name: NODE_ENV
+                      value: production
+                    - name: APP_NAME
+                      value: "{{ options.projectSlug }}"
+                    - name: NEXT_PUBLIC_API_URL
+                      from:
+                          slot: api-host
+                          output: url

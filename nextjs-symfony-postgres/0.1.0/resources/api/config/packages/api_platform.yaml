@@ -1,0 +1,19 @@
+api_platform:
+    title: "%env(APP_NAME)%"
+    description: Symfony + API Platform API scaffolded by partrocks
+    version: "0.1.0"
+
+    formats:
+        jsonld: ["application/ld+json"]
+        json: ["application/json"]
+
+    docs_formats:
+        jsonld: ["application/ld+json"]
+        jsonopenapi: ["application/vnd.openapi+json"]
+        html: ["text/html"]
+
+    mapping:
+        paths: ["%kernel.project_dir%/src/Entity"]
+
+    defaults:
+        pagination_items_per_page: 30

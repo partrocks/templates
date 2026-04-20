@@ -1,7 +1,7 @@
 version: 1
 
 templates:
-    - familyId: partrocks/nextjs-symfony-postgres
+    - familyId: nextjs-symfony-postgres
       name: Next.js + Symfony API Platform + Postgres
       description: >-
           Two-codebase application with a Next.js frontend, a PHP Symfony /

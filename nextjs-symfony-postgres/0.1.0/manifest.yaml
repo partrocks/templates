@@ -198,10 +198,22 @@ environments:
             services:
                 - name: web
                   image: node:20-bookworm
+                  command:
+                      - sh
+                      - -c
+                      - cd /workspace/web && npm install && npm run dev
                 - name: api
                   image: php:8.3-cli-bookworm
+                  command:
+                      - sh
+                      - -c
+                      - cd /workspace/api && composer install --no-interaction --prefer-dist && php -S 0.0.0.0:8000 -t public
                 - name: db
                   image: postgres:16
+                  environment:
+                      POSTGRES_USER: "{{ options.databaseUser }}"
+                      POSTGRES_PASSWORD: "{{ options.databasePassword }}"
+                      POSTGRES_DB: "{{ options.databaseName }}"
             # Host-published ports: 3000 = Next.js dev, 8000 = Symfony dev,
             # 5432 = Postgres exposed for local tooling.
             ports:
@@ -213,6 +225,10 @@ environments:
                 # overlaps a codebase path.
                 - source: ./data/postgres
                   target: /var/lib/postgresql/data
+                - source: ./apps/web
+                  target: /workspace/web
+                - source: ./apps/api
+                  target: /workspace/api
         codebases:
             web:
                 env:

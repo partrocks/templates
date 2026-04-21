@@ -1,7 +1,7 @@
 schemaVersion: 2
 
 manifest:
-    id: partrocks/nextjs-symfony-postgres
+    id: nextjs-symfony-postgres
     name: Next.js + Symfony API Platform + Postgres
     version: "0.1.0"
     description: >-

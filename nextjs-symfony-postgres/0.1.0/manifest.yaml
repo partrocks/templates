@@ -43,6 +43,11 @@ options:
 
 # ---------------------------------------------------------------------------
 # codebases — two: a Next.js frontend (web) and a Symfony API (api).
+#
+# `copy.from` is relative to the template's `resources/` directory (no
+# `resources/` prefix). `copy.to` is relative to the container workspace
+# root (default `/app`). `workingPath` / `outputPath` default to `/app` /
+# `/out` and are only set here when they need to differ.
 # ---------------------------------------------------------------------------
 codebases:
     web:
@@ -54,34 +59,34 @@ codebases:
             steps:
                 - id: scaffold-package-json
                   copy:
-                      from: resources/web/package.json
-                      to: /workspace/package.json
+                      from: web/package.json
+                      to: package.json
                 - id: scaffold-next-config
                   copy:
-                      from: resources/web/next.config.mjs
-                      to: /workspace/next.config.mjs
+                      from: web/next.config.mjs
+                      to: next.config.mjs
                 - id: scaffold-tsconfig
                   copy:
-                      from: resources/web/tsconfig.json
-                      to: /workspace/tsconfig.json
+                      from: web/tsconfig.json
+                      to: tsconfig.json
                 - id: scaffold-layout
                   copy:
-                      from: resources/web/app/layout.tsx
-                      to: /workspace/app/layout.tsx
+                      from: web/app/layout.tsx
+                      to: app/layout.tsx
                 - id: scaffold-page
                   copy:
-                      from: resources/web/app/page.tsx
-                      to: /workspace/app/page.tsx
+                      from: web/app/page.tsx
+                      to: app/page.tsx
                 - id: scaffold-gitignore
                   copy:
-                      from: resources/web/.gitignore
-                      to: /workspace/.gitignore
+                      from: web/.gitignore
+                      to: .gitignore
                 - id: install
                   run: npm install
                 - id: build
                   run: npm run build
-            workingPath: /workspace
-            outputPath: /workspace/.next
+            # Artifact lives under `/app/.next`; override default `/out`.
+            outputPath: /app/.next
 
     api:
         path: ./apps/api
@@ -92,115 +97,134 @@ codebases:
             steps:
                 - id: scaffold-composer-json
                   copy:
-                      from: resources/api/composer.json
-                      to: /workspace/composer.json
+                      from: api/composer.json
+                      to: composer.json
                 - id: scaffold-front-controller
                   copy:
-                      from: resources/api/public/index.php
-                      to: /workspace/public/index.php
+                      from: api/public/index.php
+                      to: public/index.php
                 - id: scaffold-console
                   copy:
-                      from: resources/api/bin/console
-                      to: /workspace/bin/console
+                      from: api/bin/console
+                      to: bin/console
                 - id: scaffold-kernel
                   copy:
-                      from: resources/api/src/Kernel.php
-                      to: /workspace/src/Kernel.php
+                      from: api/src/Kernel.php
+                      to: src/Kernel.php
                 - id: scaffold-entity-greeting
                   copy:
-                      from: resources/api/src/Entity/Greeting.php
-                      to: /workspace/src/Entity/Greeting.php
+                      from: api/src/Entity/Greeting.php
+                      to: src/Entity/Greeting.php
                 - id: scaffold-bundles
                   copy:
-                      from: resources/api/config/bundles.php
-                      to: /workspace/config/bundles.php
+                      from: api/config/bundles.php
+                      to: config/bundles.php
                 - id: scaffold-preload
                   copy:
-                      from: resources/api/config/preload.php
-                      to: /workspace/config/preload.php
+                      from: api/config/preload.php
+                      to: config/preload.php
                 - id: scaffold-services
                   copy:
-                      from: resources/api/config/services.yaml
-                      to: /workspace/config/services.yaml
+                      from: api/config/services.yaml
+                      to: config/services.yaml
                 - id: scaffold-framework
                   copy:
-                      from: resources/api/config/packages/framework.yaml
-                      to: /workspace/config/packages/framework.yaml
+                      from: api/config/packages/framework.yaml
+                      to: config/packages/framework.yaml
                 - id: scaffold-api-platform
                   copy:
-                      from: resources/api/config/packages/api_platform.yaml
-                      to: /workspace/config/packages/api_platform.yaml
+                      from: api/config/packages/api_platform.yaml
+                      to: config/packages/api_platform.yaml
                 - id: scaffold-doctrine
                   copy:
-                      from: resources/api/config/packages/doctrine.yaml
-                      to: /workspace/config/packages/doctrine.yaml
+                      from: api/config/packages/doctrine.yaml
+                      to: config/packages/doctrine.yaml
                 - id: scaffold-routing
                   copy:
-                      from: resources/api/config/packages/routing.yaml
-                      to: /workspace/config/packages/routing.yaml
+                      from: api/config/packages/routing.yaml
+                      to: config/packages/routing.yaml
                 - id: scaffold-routes-api
                   copy:
-                      from: resources/api/config/routes/api_platform.yaml
-                      to: /workspace/config/routes/api_platform.yaml
+                      from: api/config/routes/api_platform.yaml
+                      to: config/routes/api_platform.yaml
                 - id: scaffold-env
                   copy:
-                      from: resources/api/.env
-                      to: /workspace/.env
+                      from: api/.env
+                      to: .env
                 - id: scaffold-gitignore
                   copy:
-                      from: resources/api/.gitignore
-                      to: /workspace/.gitignore
+                      from: api/.gitignore
+                      to: .gitignore
                 - id: install
                   run: composer install --no-interaction --prefer-dist --no-progress
                 - id: warmup
                   run: php bin/console cache:warmup --env=prod
-            workingPath: /workspace
-            outputPath: /workspace
 
 # ---------------------------------------------------------------------------
 # environments — develop (Docker) + cloud topology (EC2 + Postgres).
+#
+# Develop services are keyed by service key (also used as the Docker
+# network alias). `codebaseId` binds a service to a codebase — when set,
+# the launcher mounts the codebase root at `/app` rw and sets the
+# container working directory to `/app`. Ports use the `"host:container"`
+# form (bare integer `n` is shorthand for `"n:n"`). `dependsOn` waits
+# until the dependency's TCP readiness probe succeeds before starting a
+# service.
 # ---------------------------------------------------------------------------
 environments:
     develop:
         type: docker
-        docker:
-            services:
-                - name: web
-                  image: node:20-bookworm
-                  command:
-                      - sh
-                      - -c
-                      - cd /workspace/web && npm install && npm run dev
-                - name: api
-                  image: php:8.3-cli-bookworm
-                  command:
-                      - sh
-                      - -c
-                      - cd /workspace/api && composer install --no-interaction --prefer-dist && php -S 0.0.0.0:8000 -t public
-                - name: db
-                  image: postgres:16
-                  environment:
-                      POSTGRES_USER: "{{ options.databaseUser }}"
-                      POSTGRES_PASSWORD: "{{ options.databasePassword }}"
-                      POSTGRES_DB: "{{ options.databaseName }}"
-            # Host-published ports: 3000 = Next.js dev, 8000 = Symfony dev,
-            # 5432 = Postgres exposed for local tooling.
-            ports:
-                - 3000
-                - 8000
-                - 5432
-            mounts:
-                # Postgres data volume — kept outside ./apps so it never
-                # overlaps a codebase path.
-                - source: ./data/postgres
-                  target: /var/lib/postgresql/data
-                - source: ./apps/web
-                  target: /workspace/web
-                - source: ./apps/api
-                  target: /workspace/api
-        codebases:
+        services:
+            db:
+                image: postgres:16
+                ports:
+                    - "5432:5432"
+                readiness:
+                    port: 5432
+                mounts:
+                    # Postgres data volume — kept outside ./apps so it never
+                    # overlaps a codebase path.
+                    - source: ./data/postgres
+                      target: /var/lib/postgresql/data
+                environment:
+                    - name: POSTGRES_USER
+                      value: "{{ options.databaseUser }}"
+                    - name: POSTGRES_PASSWORD
+                      value: "{{ options.databasePassword }}"
+                    - name: POSTGRES_DB
+                      value: "{{ options.databaseName }}"
+
+            api:
+                codebaseId: api
+                image: php:8.3-cli-bookworm
+                ports:
+                    - "8000:8000"
+                dependsOn:
+                    - db
+                command: "composer install --no-interaction --prefer-dist"
+                entrypoint: "php -S 0.0.0.0:8000 -t public"
+                environment:
+                    - name: APP_ENV
+                      value: dev
+                    - name: APP_NAME
+                      value: "{{ options.projectSlug }}"
+                    - name: DATABASE_URL
+                      value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@db:5432/{{ options.databaseName }}?serverVersion=16&charset=utf8"
+
             web:
-                env:
+                codebaseId: web
+                image: node:20-bookworm
+                ports:
+                    - "3000:3000"
+                # Explicit on both `api` and `db` even though `api` already
+                # waits on `db` — keeps `web`'s dependencies self-documenting
+                # and guarantees readiness order if the graph is ever edited.
+                dependsOn:
+                    - api
+                    - db
+                command: "npm install"
+                entrypoint: "npm run dev"
+                environment:
                     - name: NODE_ENV
                       value: development
                     # The web app only talks to the API over HTTP — it does
@@ -209,19 +233,6 @@ environments:
                       value: http://localhost:8000
                     - name: APP_NAME
                       value: "{{ options.projectSlug }}"
-            api:
-                env:
-                    - name: APP_ENV
-                      value: dev
-                    - name: APP_NAME
-                      value: "{{ options.projectSlug }}"
-                    # The API is the only codebase that owns DATABASE_URL.
-                    # Develop uses the local docker `db` service; production
-                    # uses the cloud `primary-db` slot output below.
-                    - name: DATABASE_URL
-                      value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@db:5432/{{ options.databaseName }}?serverVersion=16&charset=utf8"
-                    - name: APP_SECRET
-                      fromSecret: api_app_secret
 
     cloud:
         slots:

@@ -42,37 +42,6 @@ options:
         default: app
 
 # ---------------------------------------------------------------------------
-# declare.resources — inventory of template-shipped files. Every copy.from
-# below must appear here; every entry here must exist on disk under
-# <template-root>/resources/.
-# ---------------------------------------------------------------------------
-declare:
-    resources:
-        # Next.js web
-        - resources/web/package.json
-        - resources/web/next.config.mjs
-        - resources/web/tsconfig.json
-        - resources/web/app/layout.tsx
-        - resources/web/app/page.tsx
-        - resources/web/.gitignore
-        # Symfony + API Platform
-        - resources/api/composer.json
-        - resources/api/public/index.php
-        - resources/api/bin/console
-        - resources/api/src/Kernel.php
-        - resources/api/src/Entity/Greeting.php
-        - resources/api/config/bundles.php
-        - resources/api/config/preload.php
-        - resources/api/config/services.yaml
-        - resources/api/config/packages/framework.yaml
-        - resources/api/config/packages/api_platform.yaml
-        - resources/api/config/packages/doctrine.yaml
-        - resources/api/config/packages/routing.yaml
-        - resources/api/config/routes/api_platform.yaml
-        - resources/api/.env
-        - resources/api/.gitignore
-
-# ---------------------------------------------------------------------------
 # codebases — two: a Next.js frontend (web) and a Symfony API (api).
 # ---------------------------------------------------------------------------
 codebases:

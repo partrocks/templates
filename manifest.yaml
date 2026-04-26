@@ -1,17 +1,25 @@
 version: 1
 
 templates:
-    - familyId: nextjs-symfony-postgres
-      name: Next.js + Symfony API Platform + Postgres
-      description: >-
-          Two-codebase application with a Next.js frontend, a PHP Symfony /
-          API Platform API, and a shared Postgres database. Both apps deploy
-          to EC2; the develop environment is fully Dockerised.
-      latestVersion: "0.1.0"
-      versions:
-          - version: "0.1.0"
-            path: nextjs-symfony-postgres/0.1.0
+  - familyId: nextjs-symfony-postgres
+    name: Next.js + Symfony API Platform + Postgres
+    description: >-
+      Two-codebase application with a Next.js frontend, a PHP Symfony /
+      API Platform API, and a shared Postgres database. Both apps deploy
+      to EC2; the develop environment is fully Dockerised.
+    latestVersion: "0.1.0"
+    versions:
+      - version: "0.1.0"
+        path: nextjs-symfony-postgres/0.1.0
+  - familyId: symfony-api-postgres
+    name: Symfony API Platform + Postgres
+    description: >-
+      A PHP Symfony / API Platform API sharing a Postgres database. App host on EC2; develop runs in Docker.
+    latestVersion: "0.1.0"
+    versions:
+      - version: "0.1.0"
+        path: symfony-api-postgres/0.1.0
 
 metadata:
-    name: "PartRocks Community Catalog"
-    description: "A catalog of community templates for PartRocks"
+  name: "PartRocks Community Catalog"
+  description: "A catalog of community templates for PartRocks"

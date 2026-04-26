@@ -1,0 +1,39 @@
+environments:
+  develop:
+    type: docker
+    services:
+      db:
+        image: postgres:16
+        ports:
+          - "5432:5432"
+        readiness:
+          port: 5432
+        mounts:
+          # Postgres data volume — kept outside ./apps so it never
+          # overlaps a codebase path.
+          - source: ./data/postgres
+            target: /var/lib/postgresql/data
+        environment:
+          - name: POSTGRES_USER
+            value: "{{ options.databaseUser }}"
+          - name: POSTGRES_PASSWORD
+            value: "{{ options.databasePassword }}"
+          - name: POSTGRES_DB
+            value: "{{ options.databaseName }}"
+
+      api:
+        codebaseId: api
+        image: php:8.3-cli-bookworm
+        ports:
+          - "8000:8000"
+        dependsOn:
+          - db
+        command: "composer install --no-interaction --prefer-dist"
+        entrypoint: "php -S 0.0.0.0:8000 -t public"
+        environment:
+          - name: APP_ENV
+            value: dev
+          - name: APP_NAME
+            value: "{{ options.projectSlug }}"
+          - name: DATABASE_URL
+            value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@db:5432/{{ options.databaseName }}?serverVersion=16&charset=utf8"

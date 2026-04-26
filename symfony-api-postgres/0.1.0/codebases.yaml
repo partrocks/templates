@@ -1,0 +1,24 @@
+# ---------------------------------------------------------------------------
+# codebases — two: a Next.js frontend (web) and a Symfony API (api).
+#
+# `copy.from` is relative to the template's `resources/` directory (no
+# `resources/` prefix). `copy.to` is relative to the container workspace
+# root (default `/app`). `workingPath` / `outputPath` default to `/app` /
+# `/out` and are only set here when they need to differ.
+# ---------------------------------------------------------------------------
+codebases:
+  api:
+    path: ./apps/api
+    build:
+      baseImage: php:8.3-cli-bookworm
+      dependencies:
+        - composer
+      steps:
+        - id: scaffold-symfony-skeleton
+          run: composer create-project symfony/skeleton ./ --no-interaction
+        - id: require-dependencies
+          run: composer require api-platform/api-platform doctrine/orm symfony/validator symfony/serializer symfony/annotations --no-interaction
+        - id: require-dev-dependencies
+          run: composer require --dev symfony/maker-bundle --no-interaction
+        - id: install
+          run: composer install --no-interaction --prefer-dist

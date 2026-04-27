@@ -15,7 +15,11 @@ codebases:
         - composer
       steps:
         - id: scaffold-symfony-skeleton
-          run: rm -rf /tmp/partrocks-symfony-skeleton && composer create-project symfony/skeleton /tmp/partrocks-symfony-skeleton --no-interaction --no-progress && cp -a /tmp/partrocks-symfony-skeleton/. ./ && rm -rf /tmp/partrocks-symfony-skeleton
+          run: composer create-project symfony/skeleton . --no-interaction --no-progress
+        - id: scaffold-gitignore
+          copy:
+            from: api/.gitignore
+            to: .gitignore
         - id: require-dependencies
           run: composer require api-platform/symfony:^4.0 api-platform/doctrine-orm:^4.0 doctrine/dbal:^3.8 doctrine/doctrine-bundle:^2.12 doctrine/orm:^3.0 symfony/validator symfony/serializer --no-interaction --no-progress
         - id: require-dev-dependencies

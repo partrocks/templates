@@ -5,9 +5,9 @@ environments:
       db:
         image: postgres:16
         ports:
-          - "5432:5432"
-        readiness:
-          port: 5432
+          db:
+            container: 5432
+            host: auto
         mounts:
           # Postgres data volume — kept outside ./apps so it never
           # overlaps a codebase path.
@@ -25,17 +25,19 @@ environments:
         codebaseId: api
         image: php:8.3-cli-bookworm
         ports:
-          - "8000:8000"
+          http:
+            container: 8000
+            host: auto
         dependsOn:
           - db
-        entrypoint: "php -S 0.0.0.0:8000 -t public"
+        entrypoint: "php -S 0.0.0.0:{{ services.api.ports.http.container }} -t public"
         environment:
           - name: APP_ENV
             value: dev
           - name: APP_NAME
             value: "{{ options.projectSlug }}"
           - name: DATABASE_URL
-            value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@db:5432/{{ options.databaseName }}?serverVersion=16&charset=utf8"
+            value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
         actions:
           clear-cache:
             label: Clear Symfony cache

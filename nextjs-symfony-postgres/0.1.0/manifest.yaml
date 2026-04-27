@@ -167,10 +167,11 @@ codebases:
 # Develop services are keyed by service key (also used as the Docker
 # network alias). `codebaseId` binds a service to a codebase — when set,
 # the launcher mounts the codebase root at `/app` rw and sets the
-# container working directory to `/app`. Ports use the `"host:container"`
-# form (bare integer `n` is shorthand for `"n:n"`). `dependsOn` waits
-# until the dependency's TCP readiness probe succeeds before starting a
-# service.
+# container working directory to `/app`. Ports are named maps with a stable
+# port id, required container port, and optional host port. Omit `host` or set
+# it to `auto` to publish from the active profile's develop port range.
+# `dependsOn` waits until the dependency's TCP readiness probe succeeds before
+# starting a service.
 # ---------------------------------------------------------------------------
 environments:
     develop:
@@ -179,7 +180,9 @@ environments:
             db:
                 image: postgres:16
                 ports:
-                    - "5432:5432"
+                    db:
+                        container: 5432
+                        host: auto
                 readiness:
                     port: 5432
                 mounts:
@@ -199,17 +202,19 @@ environments:
                 codebaseId: api
                 image: php:8.3-cli-bookworm
                 ports:
-                    - "8000:8000"
+                    http:
+                        container: 8000
+                        host: auto
                 dependsOn:
                     - db
-                entrypoint: "php -S 0.0.0.0:8000 -t public"
+                entrypoint: "php -S 0.0.0.0:{{ services.api.ports.http.container }} -t public"
                 environment:
                     - name: APP_ENV
                       value: dev
                     - name: APP_NAME
                       value: "{{ options.projectSlug }}"
                     - name: DATABASE_URL
-                      value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@db:5432/{{ options.databaseName }}?serverVersion=16&charset=utf8"
+                      value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
                 actions:
                     clear-cache:
                         label: Clear Symfony cache
@@ -219,7 +224,9 @@ environments:
                 codebaseId: web
                 image: node:20-bookworm
                 ports:
-                    - "3000:3000"
+                    http:
+                        container: 3000
+                        host: auto
                 # Explicit on both `api` and `db` even though `api` already
                 # waits on `db` — keeps `web`'s dependencies self-documenting
                 # and guarantees readiness order if the graph is ever edited.
@@ -234,7 +241,7 @@ environments:
                     # The web app only talks to the API over HTTP — it does
                     # NOT hold DATABASE_URL. Postgres is shared via the API.
                     - name: NEXT_PUBLIC_API_URL
-                      value: http://localhost:8000
+                      value: "http://{{ services.api.hostname }}:{{ services.api.ports.http.container }}"
                     - name: APP_NAME
                       value: "{{ options.projectSlug }}"
 

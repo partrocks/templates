@@ -20,11 +20,11 @@ codebases:
           copy:
             from: api/.gitignore
             to: .gitignore
-        - id: require-dependencies
-          run: composer require api-platform/symfony:^4.0 api-platform/doctrine-orm:^4.0 doctrine/dbal:^3.8 doctrine/doctrine-bundle:^2.12 doctrine/orm:^3.0 symfony/validator symfony/serializer --no-interaction --no-progress
-        - id: require-dev-dependencies
-          run: composer require --dev symfony/maker-bundle --no-interaction --no-progress
+        - id: copy-composer-manifest
+          copy:
+            from: api/composer.json
+            to: composer.json
         - id: install
-          run: composer install --no-interaction --prefer-dist --no-progress
+          run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist --no-progress
       workingPath: /app
       outputPath: /app

@@ -210,6 +210,10 @@ environments:
                       value: "{{ options.projectSlug }}"
                     - name: DATABASE_URL
                       value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@db:5432/{{ options.databaseName }}?serverVersion=16&charset=utf8"
+                actions:
+                    clear-cache:
+                        label: Clear Symfony cache
+                        run: "php bin/console cache:clear"
 
             web:
                 codebaseId: web

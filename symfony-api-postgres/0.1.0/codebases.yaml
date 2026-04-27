@@ -3,8 +3,8 @@
 #
 # `copy.from` is relative to the template's `resources/` directory (no
 # `resources/` prefix). `copy.to` is relative to the container workspace
-# root (default `/app`). `workingPath` / `outputPath` default to `/app` /
-# `/out` and are only set here when they need to differ.
+# root (default `/app`). `workingPath` / `outputPath` default to `/app`;
+# both are set here to make the Docker-backed build contract explicit.
 # ---------------------------------------------------------------------------
 codebases:
   api:
@@ -15,10 +15,12 @@ codebases:
         - composer
       steps:
         - id: scaffold-symfony-skeleton
-          run: composer create-project symfony/skeleton ./ --no-interaction
+          run: rm -rf /tmp/partrocks-symfony-skeleton && composer create-project symfony/skeleton /tmp/partrocks-symfony-skeleton --no-interaction --no-progress && cp -a /tmp/partrocks-symfony-skeleton/. ./ && rm -rf /tmp/partrocks-symfony-skeleton
         - id: require-dependencies
-          run: composer require api-platform/api-platform doctrine/orm symfony/validator symfony/serializer symfony/annotations --no-interaction
+          run: composer require api-platform/symfony:^4.0 api-platform/doctrine-orm:^4.0 doctrine/dbal:^3.8 doctrine/doctrine-bundle:^2.12 doctrine/orm:^3.0 symfony/validator symfony/serializer --no-interaction --no-progress
         - id: require-dev-dependencies
-          run: composer require --dev symfony/maker-bundle --no-interaction
+          run: composer require --dev symfony/maker-bundle --no-interaction --no-progress
         - id: install
-          run: composer install --no-interaction --prefer-dist
+          run: composer install --no-interaction --prefer-dist --no-progress
+      workingPath: /app
+      outputPath: /app

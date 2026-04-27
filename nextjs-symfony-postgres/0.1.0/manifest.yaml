@@ -46,8 +46,8 @@ options:
 #
 # `copy.from` is relative to the template's `resources/` directory (no
 # `resources/` prefix). `copy.to` is relative to the container workspace
-# root (default `/app`). `workingPath` / `outputPath` default to `/app` /
-# `/out` and are only set here when they need to differ.
+# root (default `/app`). `workingPath` / `outputPath` default to `/app`;
+# `outputPath` is only set below when a codebase emits a narrower artifact.
 # ---------------------------------------------------------------------------
 codebases:
     web:
@@ -85,7 +85,7 @@ codebases:
                   run: npm install
                 - id: build
                   run: npm run build
-            # Artifact lives under `/app/.next`; override default `/out`.
+            # Artifact lives under `/app/.next`; narrow the default workspace output.
             outputPath: /app/.next
 
     api:
@@ -159,6 +159,7 @@ codebases:
                   run: composer install --no-interaction --prefer-dist --no-progress
                 - id: warmup
                   run: php bin/console cache:warmup --env=prod
+            outputPath: /app
 
 # ---------------------------------------------------------------------------
 # environments — develop (Docker) + cloud topology (EC2 + Postgres).
@@ -201,7 +202,6 @@ environments:
                     - "8000:8000"
                 dependsOn:
                     - db
-                command: "composer install --no-interaction --prefer-dist"
                 entrypoint: "php -S 0.0.0.0:8000 -t public"
                 environment:
                     - name: APP_ENV

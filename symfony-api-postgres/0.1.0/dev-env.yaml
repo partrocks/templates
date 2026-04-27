@@ -28,7 +28,6 @@ environments:
           - "8000:8000"
         dependsOn:
           - db
-        command: "composer install --no-interaction --prefer-dist"
         entrypoint: "php -S 0.0.0.0:8000 -t public"
         environment:
           - name: APP_ENV

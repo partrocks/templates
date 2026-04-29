@@ -9,18 +9,18 @@ options:
     label: Postgres database name
     type: string
     required: false
-    default: "{{ app.slug }}"
+    default: app
 
   databaseUser:
     id: databaseUser
     label: Postgres user (develop only)
     type: string
     required: false
-    default: "{{ app.slug }}"
+    default: app
 
   databasePassword:
     id: databasePassword
     label: Postgres password (develop only)
     type: string
     required: false
-    default: "{{ app.slug }}"
+    default: app

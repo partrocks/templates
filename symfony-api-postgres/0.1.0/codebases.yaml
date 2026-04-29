@@ -15,7 +15,7 @@ codebases:
         - composer
       steps:
         - id: scaffold-symfony-skeleton
-          run: composer create-project symfony/skeleton . --no-interaction --no-progress
+          run: composer create-project symfony/skeleton . --no-interaction
         - id: scaffold-gitignore
           copy:
             from: api/.gitignore
@@ -25,6 +25,10 @@ codebases:
             from: api/composer.json
             to: composer.json
         - id: install
-          run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist --no-progress
+          run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
+        - id: permissions
+          run: chmod +x bin/console
+        - id: cache-warmup
+          run: php bin/console cache:warmup --env=dev --no-interaction
       workingPath: /app
       outputPath: /app

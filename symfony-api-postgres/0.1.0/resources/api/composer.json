@@ -11,6 +11,7 @@
         "api-platform/symfony": "^4.0",
         "doctrine/dbal": "^3.8",
         "doctrine/doctrine-bundle": "^2.12",
+        "doctrine/doctrine-migrations-bundle": "^3.7",
         "doctrine/orm": "^3.0",
         "symfony/console": "7.4.*",
         "symfony/dotenv": "7.4.*",
@@ -22,7 +23,9 @@
         "symfony/yaml": "7.4.*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.67"
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "symfony/maker-bundle": "^1.67",
+        "symfony/profiler-pack": "^1.0"
     },
     "config": {
         "allow-plugins": {

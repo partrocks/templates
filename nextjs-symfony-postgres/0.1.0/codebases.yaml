@@ -1,0 +1,119 @@
+# ---------------------------------------------------------------------------
+# codebases — two: a Next.js frontend (web) and a Symfony API (api).
+#
+# `copy.from` is relative to the template's `resources/` directory (no
+# `resources/` prefix). `copy.to` is relative to the container workspace
+# root (default `/app`). `workingPath` / `outputPath` default to `/app`;
+# `outputPath` is only set below when a codebase emits a narrower artifact.
+# ---------------------------------------------------------------------------
+codebases:
+  web:
+    path: ./apps/web
+    build:
+      baseImage: node:20-bookworm
+      dependencies:
+        - npm
+      steps:
+        - id: scaffold-package-json
+          copy:
+            from: web/package.json
+            to: package.json
+        - id: scaffold-next-config
+          copy:
+            from: web/next.config.mjs
+            to: next.config.mjs
+        - id: scaffold-tsconfig
+          copy:
+            from: web/tsconfig.json
+            to: tsconfig.json
+        - id: scaffold-layout
+          copy:
+            from: web/app/layout.tsx
+            to: app/layout.tsx
+        - id: scaffold-page
+          copy:
+            from: web/app/page.tsx
+            to: app/page.tsx
+        - id: scaffold-gitignore
+          copy:
+            from: web/.gitignore
+            to: .gitignore
+        - id: install
+          run: npm install
+        - id: build
+          run: npm run build
+      # Artifact lives under `/app/.next`; narrow the default workspace output.
+      outputPath: /app/.next
+
+  api:
+    path: ./apps/api
+    build:
+      baseImage: php:8.3-cli-bookworm
+      dependencies:
+        - composer
+      steps:
+        - id: scaffold-composer-json
+          copy:
+            from: api/composer.json
+            to: composer.json
+        - id: scaffold-front-controller
+          copy:
+            from: api/public/index.php
+            to: public/index.php
+        - id: scaffold-console
+          copy:
+            from: api/bin/console
+            to: bin/console
+        - id: scaffold-kernel
+          copy:
+            from: api/src/Kernel.php
+            to: src/Kernel.php
+        - id: scaffold-entity-greeting
+          copy:
+            from: api/src/Entity/Greeting.php
+            to: src/Entity/Greeting.php
+        - id: scaffold-bundles
+          copy:
+            from: api/config/bundles.php
+            to: config/bundles.php
+        - id: scaffold-preload
+          copy:
+            from: api/config/preload.php
+            to: config/preload.php
+        - id: scaffold-services
+          copy:
+            from: api/config/services.yaml
+            to: config/services.yaml
+        - id: scaffold-framework
+          copy:
+            from: api/config/packages/framework.yaml
+            to: config/packages/framework.yaml
+        - id: scaffold-api-platform
+          copy:
+            from: api/config/packages/api_platform.yaml
+            to: config/packages/api_platform.yaml
+        - id: scaffold-doctrine
+          copy:
+            from: api/config/packages/doctrine.yaml
+            to: config/packages/doctrine.yaml
+        - id: scaffold-routing
+          copy:
+            from: api/config/packages/routing.yaml
+            to: config/packages/routing.yaml
+        - id: scaffold-routes-api
+          copy:
+            from: api/config/routes/api_platform.yaml
+            to: config/routes/api_platform.yaml
+        - id: scaffold-env
+          copy:
+            from: api/.env
+            to: .env
+        - id: scaffold-gitignore
+          copy:
+            from: api/.gitignore
+            to: .gitignore
+        - id: install
+          run: composer install --no-interaction --prefer-dist --no-progress
+        - id: warmup
+          run: php bin/console cache:warmup --env=prod
+      outputPath: /app

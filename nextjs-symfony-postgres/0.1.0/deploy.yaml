@@ -1,0 +1,54 @@
+# ---------------------------------------------------------------------------
+# environments — cloud topology (EC2 + Postgres).
+# ---------------------------------------------------------------------------
+environments:
+  cloud:
+    slots:
+      # Non-hosting slot: Postgres. Exposes `connectionString` output
+      # consumed by the api hosting slot. No codebaseId, no env.
+      primary-db:
+        type: database
+        allowed:
+          - aws::database::postgres
+
+      # API host — EC2 single-instance. Attaches to the database so
+      # deploy order is primary-db → api-host. DATABASE_URL is the
+      # env var the user explicitly asked for.
+      api-host:
+        type: hosting
+        codebaseId: api
+        allowed:
+          - aws::hosting::ec2-single
+        attachesTo:
+          - primary-db
+        env:
+          - name: APP_ENV
+            value: prod
+          - name: APP_NAME
+            value: "{{ options.projectSlug }}"
+          - name: DATABASE_URL
+            from:
+              slot: primary-db
+              output: connectionString
+          - name: APP_SECRET
+            fromSecret: api_app_secret
+
+      # Web host — EC2 single-instance. Attaches to the API so the
+      # public URL resolves after the API is up. Web never sees
+      # DATABASE_URL; only NEXT_PUBLIC_API_URL.
+      web-host:
+        type: hosting
+        codebaseId: web
+        allowed:
+          - aws::hosting::ec2-single
+        attachesTo:
+          - api-host
+        env:
+          - name: NODE_ENV
+            value: production
+          - name: APP_NAME
+            value: "{{ options.projectSlug }}"
+          - name: NEXT_PUBLIC_API_URL
+            from:
+              slot: api-host
+              output: url

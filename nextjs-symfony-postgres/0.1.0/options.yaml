@@ -1,0 +1,32 @@
+# ---------------------------------------------------------------------------
+# Options — caller-tunable knobs. Only {{ options.* }} substitution is
+# supported anywhere in this file.
+# ---------------------------------------------------------------------------
+options:
+  projectSlug:
+    id: projectSlug
+    label: Project slug
+    type: string
+    required: true
+    default: my-app
+
+  databaseName:
+    id: databaseName
+    label: Postgres database name
+    type: string
+    required: false
+    default: app
+
+  databaseUser:
+    id: databaseUser
+    label: Postgres user (develop only)
+    type: string
+    required: false
+    default: app
+
+  databasePassword:
+    id: databasePassword
+    label: Postgres password (develop only)
+    type: string
+    required: false
+    default: app

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
-# Options — caller-tunable knobs. Only {{ options.* }} substitution is
-# supported anywhere in this file. Application display name / slug come from
-# {{ app.name }} / {{ app.slug }} (provided by the runtime).
+# Options — caller-tunable knobs. `{{ options.* }}` refers to resolved values below.
+# String defaults may use `{{ app.name }}`, `{{ app.slug }}`, earlier options,
+# `manifest.*`, or develop `services.*` — substituted when the template instance is created.
 # ---------------------------------------------------------------------------
 options:
   databaseName:
@@ -9,18 +9,18 @@ options:
     label: Postgres database name
     type: string
     required: false
-    default: app
+    default: "{{ app.slug }}"
 
   databaseUser:
     id: databaseUser
     label: Postgres user (develop only)
     type: string
     required: false
-    default: app
+    default: "{{ app.slug }}"
 
   databasePassword:
     id: databasePassword
     label: Postgres password (develop only)
     type: string
     required: false
-    default: app
+    default: "{{ app.slug }}"

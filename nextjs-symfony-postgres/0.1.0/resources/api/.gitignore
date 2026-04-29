@@ -1,11 +1,6 @@
-/vendor/
+/.env.local
+/.env.local.php
+/.env.*.local
 /var/
-/public/bundles/
-.env.local
-.env.local.php
-.env.*.local
-composer.phar
-.phpunit.result.cache
+/vendor/
 .DS_Store
-.vscode/
-.idea/

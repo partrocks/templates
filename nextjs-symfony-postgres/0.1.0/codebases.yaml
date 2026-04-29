@@ -52,68 +52,21 @@ codebases:
       dependencies:
         - composer
       steps:
-        - id: scaffold-composer-json
-          copy:
-            from: api/composer.json
-            to: composer.json
-        - id: scaffold-front-controller
-          copy:
-            from: api/public/index.php
-            to: public/index.php
-        - id: scaffold-console
-          copy:
-            from: api/bin/console
-            to: bin/console
-        - id: scaffold-kernel
-          copy:
-            from: api/src/Kernel.php
-            to: src/Kernel.php
-        - id: scaffold-entity-greeting
-          copy:
-            from: api/src/Entity/Greeting.php
-            to: src/Entity/Greeting.php
-        - id: scaffold-bundles
-          copy:
-            from: api/config/bundles.php
-            to: config/bundles.php
-        - id: scaffold-preload
-          copy:
-            from: api/config/preload.php
-            to: config/preload.php
-        - id: scaffold-services
-          copy:
-            from: api/config/services.yaml
-            to: config/services.yaml
-        - id: scaffold-framework
-          copy:
-            from: api/config/packages/framework.yaml
-            to: config/packages/framework.yaml
-        - id: scaffold-api-platform
-          copy:
-            from: api/config/packages/api_platform.yaml
-            to: config/packages/api_platform.yaml
-        - id: scaffold-doctrine
-          copy:
-            from: api/config/packages/doctrine.yaml
-            to: config/packages/doctrine.yaml
-        - id: scaffold-routing
-          copy:
-            from: api/config/packages/routing.yaml
-            to: config/packages/routing.yaml
-        - id: scaffold-routes-api
-          copy:
-            from: api/config/routes/api_platform.yaml
-            to: config/routes/api_platform.yaml
-        - id: scaffold-env
-          copy:
-            from: api/.env
-            to: .env
+        - id: scaffold-symfony-skeleton
+          run: composer create-project symfony/skeleton . --no-interaction
         - id: scaffold-gitignore
           copy:
             from: api/.gitignore
             to: .gitignore
+        - id: copy-composer-manifest
+          copy:
+            from: api/composer.json
+            to: composer.json
         - id: install
-          run: composer install --no-interaction --prefer-dist --no-progress
-        - id: warmup
-          run: php bin/console cache:warmup --env=prod
+          run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
+        - id: permissions
+          run: chmod +x bin/console
+        - id: cache-warmup
+          run: php bin/console cache:warmup --env=dev --no-interaction
+      workingPath: /app
       outputPath: /app

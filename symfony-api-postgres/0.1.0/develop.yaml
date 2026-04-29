@@ -35,7 +35,7 @@ environments:
           - name: APP_ENV
             value: dev
           - name: APP_NAME
-            value: "{{ options.projectSlug }}"
+            value: "{{ app.name }}"
           - name: DATABASE_URL
             value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
         actions:

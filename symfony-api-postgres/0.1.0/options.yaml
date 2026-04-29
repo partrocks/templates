@@ -1,15 +1,9 @@
 # ---------------------------------------------------------------------------
 # Options — caller-tunable knobs. Only {{ options.* }} substitution is
-# supported anywhere in this file.
+# supported anywhere in this file. Application display name / slug come from
+# {{ app.name }} / {{ app.slug }} (provided by the runtime).
 # ---------------------------------------------------------------------------
 options:
-  projectSlug:
-    id: projectSlug
-    label: Project slug
-    type: string
-    required: true
-    default: my-app
-
   databaseName:
     id: databaseName
     label: Postgres database name

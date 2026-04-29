@@ -25,7 +25,7 @@ environments:
           - name: APP_ENV
             value: prod
           - name: APP_NAME
-            value: "{{ options.projectSlug }}"
+            value: "{{ app.name }}"
           - name: DATABASE_URL
             from:
               slot: primary-db
@@ -47,7 +47,7 @@ environments:
           - name: NODE_ENV
             value: production
           - name: APP_NAME
-            value: "{{ options.projectSlug }}"
+            value: "{{ app.name }}"
           - name: NEXT_PUBLIC_API_URL
             from:
               slot: api-host

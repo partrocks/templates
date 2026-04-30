@@ -83,12 +83,6 @@ codebases:
             from: api/templates/landing.html.twig
             to: templates/landing.html.twig
             substituteDelimiters: ["[[", "]]"]
-        - id: make-migrations
-          run: php bin/console make:migration
-        - id: migrate
-          run: php bin/console doctrine:migrations:migrate --no-interaction
-        - id: load-fixtures
-          run: php bin/console doctrine:fixtures:load --no-interaction
         - id: cache-warmup
           run: php bin/console cache:warmup --env=dev --no-interaction
       workingPath: /app

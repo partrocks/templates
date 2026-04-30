@@ -61,6 +61,9 @@ environments:
           load-fixtures:
             label: Load fixtures
             run: "php bin/console doctrine:fixtures:load --no-interaction"
+          make-migrations:
+            label: Make migrations
+            run: "php bin/console make:migration"
           migrate:
             label: Migrate database
             run: "php bin/console doctrine:migrations:migrate --no-interaction"

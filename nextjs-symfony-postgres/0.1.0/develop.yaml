@@ -54,8 +54,14 @@ environments:
             value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
         actions:
           clear-cache:
-            label: Clear Symfony cache
+            label: Clear cache
             run: "php bin/console cache:clear"
+          load-fixtures:
+            label: Load fixtures
+            run: "php bin/console doctrine:fixtures:load --no-interaction"
+          migrate:
+            label: Migrate database
+            run: "php bin/console doctrine:migrations:migrate --no-interaction"
 
       web:
         codebaseId: web

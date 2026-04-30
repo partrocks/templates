@@ -82,6 +82,7 @@ codebases:
           copy:
             from: api/templates/landing.html.twig
             to: templates/landing.html.twig
+            substituteDelimiters: ["[[", "]]"]
         - id: make-migrations
           run: php bin/console make:migration
         - id: migrate

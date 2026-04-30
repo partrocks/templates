@@ -42,6 +42,11 @@ reuses it on later launches (stock `php` images omit PostgreSQL drivers).
 Postgres data is persisted under `./data/postgres` (mount outside both
 codebase paths — no overlap).
 
+The **`api`** service defines **`boot`** in `develop.yaml`: on each develop
+launch Partrocks runs those template **`actions`** in order (same as the
+Application detail “Development commands” buttons). They execute on every cold
+start — keep commands idempotent where you expect repeat runs.
+
 Develop-only env bindings:
 
 - **`api`**: `APP_ENV=dev`, `APP_NAME={{ app.name }}` (application display name),

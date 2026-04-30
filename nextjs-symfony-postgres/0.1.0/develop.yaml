@@ -67,6 +67,11 @@ environments:
           migrate:
             label: Migrate database
             run: "php bin/console doctrine:migrations:migrate --no-interaction"
+        boot:
+          - make-migrations
+          - migrate
+          - load-fixtures
+          - clear-cache
 
       web:
         codebaseId: web

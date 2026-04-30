@@ -37,7 +37,9 @@ environments:
 
       api:
         codebaseId: api
-        image: php:8.3-cli-bookworm
+        image: partrocks/nextjs-symfony-postgres-api:dev
+        imageBuild:
+          dockerfile: docker/api/Dockerfile
         ports:
           http:
             container: 8000

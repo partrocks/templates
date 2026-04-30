@@ -29,11 +29,15 @@ for the two apps, `aws::database::postgres` for the database). Swap the
 
 `environments.develop.type: docker`. Three services:
 
-| service | image                      | role                                   |
-| ------- | -------------------------- | -------------------------------------- |
-| `web`   | `node:20-bookworm`         | Next.js dev server on host port 3000   |
-| `api`   | `php:8.3-cli-bookworm`     | Symfony dev server on host port 8000   |
-| `db`    | `postgres:16`              | Postgres; host port 5432 for tooling   |
+| service | image / build                         | role                                   |
+| ------- | ------------------------------------- | -------------------------------------- |
+| `web`   | `node:20-bookworm`                   | Next.js dev server on host port 3000   |
+| `api`   | `partrocks/nextjs-symfony-postgres-api:dev` (built from `resources/docker/api/Dockerfile`) | Symfony dev server on host port 8000   |
+| `db`    | `postgres:16`                        | Postgres; host port 5432 for tooling   |
+
+On develop launch, `docker build` builds the API image from the stock
+`php:8.3-cli-bookworm` base with `pdo_pgsql` installed, tags it as above, and
+reuses it on later launches (stock `php` images omit PostgreSQL drivers).
 
 Postgres data is persisted under `./data/postgres` (mount outside both
 codebase paths — no overlap).

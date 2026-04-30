@@ -66,22 +66,22 @@ codebases:
           run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
         - id: permissions
           run: chmod +x bin/console
-        - id: copy-controllers
+        - id: copy-landing-controller
           copy:
-            from: api/src/Controller
-            to: src/Controller
-        - id: copy-entities
+            from: api/src/Controller/LandingController.php
+            to: src/Controller/LandingController.php
+        - id: copy-quote-entity
           copy:
-            from: api/src/Entity
-            to: src/Entity
-        - id: copy-fixtures
+            from: api/src/Entity/Quote.php
+            to: src/Entity/Quote.php
+        - id: copy-app-fixtures
           copy:
-            from: api/src/DataFixtures
-            to: src/DataFixtures
-        - id: copy-twig-templates
+            from: api/src/DataFixtures/AppFixtures.php
+            to: src/DataFixtures/AppFixtures.php
+        - id: copy-landing-twig
           copy:
-            from: api/templates
-            to: templates
+            from: api/templates/landing.html.twig
+            to: templates/landing.html.twig
         - id: make-migrations
           run: php bin/console make:migration
         - id: migrate

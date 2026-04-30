@@ -66,6 +66,28 @@ codebases:
           run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
         - id: permissions
           run: chmod +x bin/console
+        - id: copy-controllers
+          copy:
+            from: api/src/Controller
+            to: src/Controller
+        - id: copy-entities
+          copy:
+            from: api/src/Entity
+            to: src/Entity
+        - id: copy-fixtures
+          copy:
+            from: api/src/DataFixtures
+            to: src/DataFixtures
+        - id: copy-twig-templates
+          copy:
+            from: api/templates
+            to: templates
+        - id: make-migrations
+          run: php bin/console make:migration
+        - id: migrate
+          run: php bin/console doctrine:migrations:migrate --no-interaction
+        - id: load-fixtures
+          run: php bin/console doctrine:fixtures:load --no-interaction
         - id: cache-warmup
           run: php bin/console cache:warmup --env=dev --no-interaction
       workingPath: /app

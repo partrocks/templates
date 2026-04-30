@@ -1,0 +1,179 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PartRocks Template Codebase{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --bg: #0f1419;
+            --panel: #1a222d;
+            --border: #2d3a4d;
+            --text: #e7edf4;
+            --muted: #8b9cb3;
+            --accent: #3dd68c;
+            --danger: #f07178;
+            --code-bg: #131920;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+            background: radial-gradient(ellipse 120% 80% at 50% -20%, #1e3a52 0%, var(--bg) 55%);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .wrap {
+            max-width: 44rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 4rem;
+        }
+
+        h1 {
+            font-size: clamp(1.65rem, 4vw, 2rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.35rem;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin: 0 0 2rem;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem 1.35rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .card h2 {
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin: 0 0 0.75rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            margin: 0 0 0.75rem;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-weight: 600;
+        }
+
+        .light {
+            width: 0.85rem;
+            height: 0.85rem;
+            border-radius: 50%;
+            box-shadow: 0 0 12px currentColor;
+            flex-shrink: 0;
+        }
+
+        .light--ok {
+            background: var(--accent);
+            color: var(--accent);
+        }
+
+        .light--bad {
+            background: var(--danger);
+            color: var(--danger);
+        }
+
+        .err {
+            margin-top: 0.75rem;
+            font-size: 0.8rem;
+            color: var(--danger);
+            word-break: break-word;
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+
+        pre, code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: 0.875rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.1rem;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        code {
+            color: #9ef0c3;
+        }
+
+        a {
+            color: #6ec1ff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .links {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="wrap">
+        <h1>PartRocks Template Codebase</h1>
+        <p class="subtitle">
+            A starter Symfony application with <strong>API Platform</strong> wired for JSON-LD, OpenAPI docs, and Doctrine.
+        </p>
+
+        <section class="card" aria-label="Database connection status">
+            <h2>Database</h2>
+            <div class="status">
+                <span class="light {{ dbConnected ? 'light--ok' : 'light--bad' }}" aria-hidden="true"></span>
+                <span>{{ dbConnected ? 'Connected' : 'Not connected' }}</span>
+            </div>
+            {% if not dbConnected and dbErrorMessage %}
+                <p class="err">{{ dbErrorMessage }}</p>
+            {% endif %}
+        </section>
+
+        <section class="card">
+            <h2>Example API resource</h2>
+            <p>
+                The <code>Quote</code> entity in <code>src/Entity/Quote.php</code> is exposed as an API Platform resource.
+                It maps to the <code>quotes</code> collection (fields: <code>content</code>, optional <code>author</code>).
+            </p>
+            <p>
+                List quotes with a <code>GET</code> against the collection endpoint (JSON-LD by default; add
+                <code>Accept: application/json</code> for plain JSON):
+            </p>
+            <pre><code>curl -sS "{{ app.request.schemeAndHttpHost }}{{ quotesCollectionPath }}" \
+  -H "Accept: application/json"</code></pre>
+        </section>
+
+        <p class="links">
+            API docs:
+            <a href="{{ path('api_doc', { _format: 'html' }) }}">OpenAPI / Swagger UI</a>
+            &middot;
+            <a href="{{ path('api_entrypoint', { index: 'index', _format: 'jsonld' }) }}">API entrypoint (JSON-LD)</a>
+        </p>
+    </div>
+{% endblock %}

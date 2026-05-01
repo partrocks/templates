@@ -11,7 +11,8 @@ const textMuted = "#5c6b7f";
 const accent = "#0d9488";
 
 async function fetchQuotes(): Promise<QuoteItem[]> {
-    const apiUrl = process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:8000";
+    const apiUrl =
+        process.env["NEXT_PUBLIC_API_URL"] ?? "http://localhost:8000";
     try {
         const res = await fetch(`${apiUrl}/api/quotes`, {
             headers: { Accept: "application/ld+json" },
@@ -37,7 +38,6 @@ function pickRandomQuote(quotes: QuoteItem[]): QuoteItem | null {
 export default async function Home() {
     const quotes = await fetchQuotes();
     const quote = pickRandomQuote(quotes);
-    const appName = process.env["APP_NAME"] ?? "partrocks-app";
 
     return (
         <main
@@ -77,13 +77,11 @@ export default async function Home() {
                         letterSpacing: "-0.02em",
                     }}
                 >
-                    Part Rocks
+                    [[ app.name ]] · PartRocks
                 </h1>
-                <p style={{ margin: "0 0 0.25rem", color: textMuted, fontSize: "1.05rem" }}>
-                    {appName}
-                </p>
                 <p style={{ margin: 0, color: textMuted, fontSize: "0.95rem" }}>
-                    This app is the browser UI. It talks to your Symfony / API Platform backend.
+                    This app is the browser UI. It talks to your Symfony / API
+                    Platform backend.
                 </p>
 
                 <section
@@ -109,7 +107,13 @@ export default async function Home() {
                         Quote of the day
                     </h2>
                     {quote == null || !quote.content ? (
-                        <p style={{ margin: 0, color: textMuted, lineHeight: 1.6 }}>
+                        <p
+                            style={{
+                                margin: 0,
+                                color: textMuted,
+                                lineHeight: 1.6,
+                            }}
+                        >
                             No quotes available. Is the API running at{" "}
                             <code
                                 style={{
@@ -135,7 +139,9 @@ export default async function Home() {
                                 lineHeight: 1.55,
                             }}
                         >
-                            <p style={{ margin: 0 }}>&ldquo;{quote.content}&rdquo;</p>
+                            <p style={{ margin: 0 }}>
+                                &ldquo;{quote.content}&rdquo;
+                            </p>
                             {quote.author ? (
                                 <footer
                                     style={{

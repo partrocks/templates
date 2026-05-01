@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-const appName = process.env["APP_NAME"] ?? "partrocks-app";
-
 export const metadata: Metadata = {
-    title: `${appName} · Part Rocks`,
+    title: `[[ app.name ]] · PartRocks`,
     description:
         "PartRocks — Next.js frontend for the Symfony / API Platform template API.",
 };

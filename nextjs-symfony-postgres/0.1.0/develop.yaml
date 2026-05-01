@@ -61,12 +61,14 @@ environments:
           load-fixtures:
             label: Load fixtures
             run: "php bin/console doctrine:fixtures:load --no-interaction"
+          # Prefer `diff` over `make:migration` for boot/exec: Maker is interactive
+          # under Docker exec (`make:migration` blocks on stdin).
           make-migrations:
-            label: Make migrations
-            run: "php bin/console make:migration"
+            label: Generate migration (diff)
+            run: "php bin/console doctrine:migrations:diff --no-interaction --allow-empty-diff"
           migrate:
             label: Migrate database
-            run: "php bin/console doctrine:migrations:migrate --no-interaction"
+            run: "php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
         boot:
           - make-migrations
           - migrate

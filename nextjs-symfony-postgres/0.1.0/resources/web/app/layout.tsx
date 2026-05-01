@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+const appName = process.env["APP_NAME"] ?? "partrocks-app";
+
 export const metadata: Metadata = {
-    title: process.env["APP_NAME"] ?? "partrocks-app",
-    description: "Next.js frontend for a Symfony / API Platform API",
+    title: `${appName} · Part Rocks`,
+    description:
+        "PartRocks — Next.js frontend for the Symfony / API Platform template API.",
 };
 
 export default function RootLayout({

@@ -26,14 +26,18 @@ codebases:
           copy:
             from: web/tsconfig.json
             to: tsconfig.json
+        # Use [[ ]] delimiters so default {{ }} scanning does not interact with
+        # JSX (e.g. style={{ ... }}). Substitutions are unused in these files today.
         - id: scaffold-layout
           copy:
             from: web/app/layout.tsx
             to: app/layout.tsx
+            substituteDelimiters: ["[[", "]]"]
         - id: scaffold-page
           copy:
             from: web/app/page.tsx
             to: app/page.tsx
+            substituteDelimiters: ["[[", "]]"]
         - id: scaffold-gitignore
           copy:
             from: web/.gitignore

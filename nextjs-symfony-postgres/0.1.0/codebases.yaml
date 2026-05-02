@@ -5,6 +5,9 @@
 # `resources/` prefix). `copy.to` is relative to the container workspace
 # root (default `/app`). `workingPath` / `outputPath` default to `/app`;
 # `outputPath` is only set below when a codebase emits a narrower artifact.
+#
+# Steps with `skipOnImport: false` run again after manifest import clones the
+# repo (typical installs). All steps still run in order on bootstrap.
 # ---------------------------------------------------------------------------
 codebases:
   web:
@@ -44,6 +47,7 @@ codebases:
             to: .gitignore
         - id: install
           run: npm install
+          skipOnImport: false
         - id: build
           run: npm run build
       # Artifact lives under `/app/.next`; narrow the default workspace output.
@@ -68,8 +72,12 @@ codebases:
             to: composer.json
         - id: install
           run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
+        - id: composer-rehydrate
+          run: composer install --no-interaction --prefer-dist
+          skipOnImport: false
         - id: permissions
           run: chmod +x bin/console
+          skipOnImport: false
         - id: copy-landing-controller
           copy:
             from: api/src/Controller/LandingController.php
@@ -89,5 +97,6 @@ codebases:
             substituteDelimiters: ["[[", "]]"]
         - id: cache-warmup
           run: php bin/console cache:warmup --env=dev --no-interaction
+          skipOnImport: false
       workingPath: /app
       outputPath: /app

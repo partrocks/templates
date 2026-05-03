@@ -1,0 +1,14 @@
+framework:
+  rate_limiter:
+    auth_login_ip:
+      policy: fixed_window
+      limit: "%env(int:AUTH_LOGIN_LIMIT)%"
+      interval: "1 minute"
+    auth_register_ip:
+      policy: fixed_window
+      limit: "%env(int:AUTH_REGISTER_LIMIT)%"
+      interval: "1 minute"
+    auth_reset_request_ip:
+      policy: fixed_window
+      limit: "%env(int:AUTH_RESET_REQUEST_LIMIT)%"
+      interval: "1 minute"

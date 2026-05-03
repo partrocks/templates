@@ -6,6 +6,13 @@ options:
     required: false
     default: app
 
+  withAuth:
+    id: withAuth
+    label: Use Auth System?
+    type: boolean
+    required: true
+    default: false
+
   databaseUser:
     id: databaseUser
     label: Postgres user (develop only)

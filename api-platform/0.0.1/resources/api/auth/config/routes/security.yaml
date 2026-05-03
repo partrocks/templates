@@ -1,0 +1,3 @@
+api_refresh_token:
+  path: /auth/token/refresh
+  methods: [POST]

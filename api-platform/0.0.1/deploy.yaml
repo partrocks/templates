@@ -32,3 +32,5 @@ environments:
               output: connectionString
           - name: APP_SECRET
             fromSecret: api_app_secret
+          - name: MAILER_DSN
+            fromSecret: api_mailer_dsn

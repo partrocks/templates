@@ -21,6 +21,24 @@ environments:
           - name: POSTGRES_DB
             value: "{{ options.databaseName }}"
 
+      mailpit:
+        when: options.withAuth
+        image: axllent/mailpit:latest
+        ports:
+          smtp:
+            container: 1025
+            host: auto
+          ui:
+            container: 8025
+            host: auto
+        readiness:
+          port: 1025
+        environment:
+          - name: MP_SMTP_AUTH_ACCEPT_ANY
+            value: "1"
+          - name: MP_SMTP_AUTH_ALLOW_INSECURE
+            value: "1"
+
       api:
         codebaseId: api
         image: partrocks/nextjs-symfony-postgres-api:dev
@@ -32,6 +50,7 @@ environments:
             host: auto
         dependsOn:
           - db
+          - mailpit
         entrypoint: "php -S 0.0.0.0:{{ services.api.ports.http.container }} -t public"
         environment:
           - name: APP_ENV
@@ -40,6 +59,8 @@ environments:
             value: "{{ app.name }}"
           - name: DATABASE_URL
             value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
+          - name: MAILER_DSN
+            value: "smtp://{{ services.mailpit.hostname }}:{{ services.mailpit.ports.smtp.container }}"
         actions:
           clear-cache:
             label: Clear cache

@@ -54,11 +54,13 @@ codebases:
           merge:
             from: api/auth/config/packages
             to: config/packages
+            overwrite: true
           when: options.withAuth == true
         - id: copy-config-routes-yaml-auth
           merge:
             from: api/auth/config/routes
             to: config/routes
+            overwrite: true
           when: options.withAuth == true
         - id: copy-config-bundles-php-auth
           copy:
@@ -74,21 +76,25 @@ codebases:
           merge:
             from: api/auth/migrations
             to: migrations
+            overwrite: true
           when: options.withAuth == true
         - id: copy-templates-auth
           merge:
             from: api/auth/templates
             to: templates
+            overwrite: true
           when: options.withAuth == true
         - id: copy-tests-auth
           merge:
             from: api/auth/tests
             to: tests
+            overwrite: true
           when: options.withAuth == true
         - id: copy-src-auth
           merge:
             from: api/auth/src
             to: src
+            overwrite: true
           when: options.withAuth == true
 
         # Cache warmup

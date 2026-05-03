@@ -1,8 +1,8 @@
 schemaVersion: 2
 
 manifest:
-  id: symfony-api-postgres
+  id: api-platform
   name: Symfony API Platform + Postgres
-  version: "0.1.0"
+  version: "0.0.1"
   description: >-
     A PHP Symfony / API Platform API sharing a Postgres database. App host on EC2; develop runs in Docker.

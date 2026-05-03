@@ -1,0 +1,24 @@
+options:
+  databaseName:
+    id: databaseName
+    label: Postgres database name
+    type: string
+    required: false
+    default: app
+    hidden: true
+
+  databaseUser:
+    id: databaseUser
+    label: Postgres user (develop only)
+    type: string
+    required: false
+    default: app
+    hidden: true
+
+  databasePassword:
+    id: databasePassword
+    label: Postgres password (develop only)
+    type: string
+    required: false
+    default: app
+    hidden: true

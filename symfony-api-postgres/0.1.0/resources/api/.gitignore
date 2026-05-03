@@ -1,6 +1,0 @@
-/.env.local
-/.env.local.php
-/.env.*
-/var/
-/vendor/
-.DS_Store

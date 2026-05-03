@@ -1,3 +1,6 @@
+# ---------------------------------------------------------------------------
+# environments — cloud topology (EC2 + Postgres).
+# ---------------------------------------------------------------------------
 environments:
   cloud:
     slots:
@@ -29,3 +32,23 @@ environments:
               output: connectionString
           - name: APP_SECRET
             fromSecret: api_app_secret
+
+      # Web host — EC2 single-instance. Attaches to the API so the
+      # public URL resolves after the API is up. Web never sees
+      # DATABASE_URL; only NEXT_PUBLIC_API_URL.
+      web-host:
+        type: hosting
+        codebaseId: web
+        allowed:
+          - aws::hosting::ec2-single
+        attachesTo:
+          - api-host
+        env:
+          - name: NODE_ENV
+            value: production
+          - name: APP_NAME
+            value: "{{ app.name }}"
+          - name: NEXT_PUBLIC_API_URL
+            from:
+              slot: api-host
+              output: url

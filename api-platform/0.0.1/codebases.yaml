@@ -1,11 +1,3 @@
-# ---------------------------------------------------------------------------
-# codebases — two: a Next.js frontend (web) and a Symfony API (api).
-#
-# `copy.from` is relative to the template's `resources/` directory (no
-# `resources/` prefix). `copy.to` is relative to the container workspace
-# root (default `/app`). `workingPath` / `outputPath` default to `/app`;
-# both are set here to make the Docker-backed build contract explicit.
-# ---------------------------------------------------------------------------
 codebases:
   api:
     path: ./apps/api
@@ -26,9 +18,17 @@ codebases:
             to: composer.json
         - id: install
           run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
+        - id: composer-rehydrate
+          run: composer install --no-interaction --prefer-dist
+          skipOnImport: false
         - id: permissions
           run: chmod +x bin/console
+          skipOnImport: false
+
+        # Copy the API Platform code from the template
+
         - id: cache-warmup
           run: php bin/console cache:warmup --env=dev --no-interaction
+          skipOnImport: false
       workingPath: /app
       outputPath: /app

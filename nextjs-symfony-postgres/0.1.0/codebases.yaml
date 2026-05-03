@@ -86,6 +86,7 @@ codebases:
           copy:
             from: api/src/Entity/Quote.php
             to: src/Entity/Quote.php
+        - id: copy-migration
           copy:
             from: api/migrations/Version20260503142737.php
             to: migrations/Version20260503142737.php

@@ -18,19 +18,19 @@ codebases:
           copy:
             from: api/composer.json
             to: composer.json
-          when: addAuth == false
+          when: options.withAuth == false
 
         # Auth Artifacts
         - id: copy-composer-auth-manifest
           copy:
             from: api/auth/composer.json
             to: composer.json
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-phpunit-auth
           copy:
-            from: api/auth/phpunit.xml.dist
+            from: api/auth/phpunit.dist.xml
             to: phpunit.xml.dist
-          when: addAuth == true
+          when: options.withAuth == true
 
         # Install Dependencies
         - id: install
@@ -42,47 +42,54 @@ codebases:
           run: chmod +x bin/console
           skipOnImport: false
 
+        # Non Auth Config
+        - id: merge-src-noauth-fixtures
+          merge:
+            from: api/noauth/src
+            to: src
+          when: options.withAuth == false
+
         # Auth Config
         - id: copy-configpackages-yaml-auth
           merge:
             from: api/auth/config/packages
             to: config/packages
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-config-routes-yaml-auth
           merge:
             from: api/auth/config/routes
             to: config/routes
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-config-bundles-php-auth
           copy:
             from: api/auth/config/bundles.php
             to: config/bundles.php
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-config-reference-php-auth
           copy:
             from: api/auth/config/reference.php
             to: config/reference.php
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-migrations-auth
           merge:
             from: api/auth/migrations
             to: migrations
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-templates-auth
           merge:
             from: api/auth/templates
             to: templates
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-tests-auth
           merge:
             from: api/auth/tests
             to: tests
-          when: addAuth == true
+          when: options.withAuth == true
         - id: copy-src-auth
           merge:
             from: api/auth/src
             to: src
-          when: addAuth == true
+          when: options.withAuth == true
 
         # Cache warmup
         - id: cache-warmup

@@ -22,7 +22,6 @@ environments:
             value: "{{ options.databaseName }}"
 
       mailpit:
-        when: options.withAuth
         image: axllent/mailpit:latest
         ports:
           smtp:

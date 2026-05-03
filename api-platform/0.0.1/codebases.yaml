@@ -2,7 +2,7 @@ codebases:
   api:
     path: ./apps/api
     build:
-      baseImage: php:8.3-cli-bookworm
+      baseImage: php:8.4-cli-bookworm
       dependencies:
         - composer
       steps:

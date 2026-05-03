@@ -63,12 +63,11 @@ environments:
             run: "php bin/console doctrine:fixtures:load --no-interaction"
           make-migrations:
             label: Generate migration (diff)
-            run: "php bin/console make:migration --no-interaction"
+            run: "php bin/console doctrine:migrations:migrate --no-interaction"
           migrate:
             label: Migrate database
             run: "php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration"
         boot:
-          - make-migrations
           - migrate
           - load-fixtures
           - clear-cache

@@ -12,7 +12,7 @@ templates:
       - version: "0.1.0"
         path: nextjs-symfony-postgres/0.1.0
   - familyId: api-platform
-    name: Symfony API Platform + Postgres
+    name: API Platform + Postgres
     description: >-
       A PHP Symfony / API Platform API sharing a Postgres database. App host on EC2; develop runs in Docker.
     latestVersion: "0.0.1"

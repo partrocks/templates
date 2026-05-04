@@ -49,3 +49,19 @@ body {
     color: var(--text);
     -webkit-font-smoothing: antialiased;
 }
+
+.auth-split {
+    display: flex;
+    min-height: 100vh;
+}
+
+@media (max-width: 900px) {
+    .auth-split {
+        flex-direction: column;
+    }
+
+    .auth-split > section {
+        border-right: none !important;
+        border-bottom: 1px solid var(--border);
+    }
+}

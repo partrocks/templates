@@ -127,7 +127,13 @@ when@withDashboard:
               host: auto
           dependsOn:
             - api
-          command: "npm install && rm -rf .next"
+          # Keep `.next` on a Docker named volume (Linux fs inside the VM), not on the
+          # codebase bind mount — avoids webpack/Turbopack chunk races on Docker Desktop.
+          mounts:
+            - source: "partrocks-{{ app.slug }}-dashboard-next"
+              target: "/app/.next"
+              namedVolume: true
+          command: "npm install"
           entrypoint: "npm run dev"
           environment:
             - name: NODE_ENV

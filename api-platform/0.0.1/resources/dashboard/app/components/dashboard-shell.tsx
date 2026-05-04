@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { SignOutButton } from "./sign-out-button";
+
 export type DashboardNavKey = "overview" | "users" | "settings";
 
 const navItems: { label: string; href: string; key: DashboardNavKey }[] = [
@@ -152,11 +154,10 @@ export function DashboardShell({
                             {headerTitle}
                         </p>
                     </div>
-                    {headerRight ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                            {headerRight}
-                        </div>
-                    ) : null}
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <SignOutButton />
+                        {headerRight}
+                    </div>
                 </header>
                 {children}
             </div>

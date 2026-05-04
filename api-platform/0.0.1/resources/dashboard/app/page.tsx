@@ -1,3 +1,5 @@
+import { getMeEmail } from "@/lib/auth/me-email";
+
 import { DashboardShell } from "./components/dashboard-shell";
 
 const demoUsers = [
@@ -6,14 +8,21 @@ const demoUsers = [
     { name: "Sam Rivera", email: "sam@example.com", role: "Viewer", status: "Invited" },
 ];
 
-export default function Home() {
+export default async function Home() {
+    const email = await getMeEmail();
+
     return (
         <DashboardShell
             activeNav="users"
             headerTitle="Users management"
             headerRight={
                 <span
+                    title={email ?? undefined}
                     style={{
+                        maxWidth: 280,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                         fontSize: "0.75rem",
                         color: "var(--green)",
                         padding: "0.25rem 0.5rem",
@@ -22,7 +31,7 @@ export default function Home() {
                         border: "1px solid var(--green-border)",
                     }}
                 >
-                    Live
+                    {email ?? "Signed in"}
                 </span>
             }
         >

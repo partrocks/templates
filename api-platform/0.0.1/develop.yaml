@@ -61,6 +61,10 @@ environments:
             value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
           - name: MAILER_DSN
             value: "smtp://{{ services.mailpit.hostname }}:{{ services.mailpit.ports.smtp.container }}"
+          - name: APP_FIXTURE_ADMIN_EMAIL
+            value: "admin@example.com"
+          - name: APP_FIXTURE_ADMIN_PASSWORD
+            value: "password"
         actions:
           clear-cache:
             label: Clear cache

@@ -65,6 +65,16 @@ environments:
             value: "admin@example.com"
           - name: APP_FIXTURE_ADMIN_PASSWORD
             value: "password"
+          - name: JWT_SECRET_KEY
+            when: options.withAuth == true
+            value: >-
+              dev-only-insecure-hmac-secret-min-32-chars-do-not-reuse-in-prod
+          - name: JWT_ACCESS_TTL
+            when: options.withAuth == true
+            value: "3600"
+          - name: JWT_REFRESH_TTL
+            when: options.withAuth == true
+            value: "604800"
         actions:
           clear-cache:
             label: Clear cache

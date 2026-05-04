@@ -34,3 +34,12 @@ environments:
             fromSecret: api_app_secret
           - name: MAILER_DSN
             fromSecret: api_mailer_dsn
+          - name: JWT_SECRET_KEY
+            when: options.withAuth == true
+            fromSecret: api_jwt_secret
+          - name: JWT_ACCESS_TTL
+            when: options.withAuth == true
+            value: "3600"
+          - name: JWT_REFRESH_TTL
+            when: options.withAuth == true
+            value: "604800"

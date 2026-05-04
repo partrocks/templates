@@ -55,11 +55,11 @@ Develop-only env bindings:
 - **`web`**: `NODE_ENV=development`, `APP_NAME={{ app.name }}`, and
   `NEXT_PUBLIC_API_URL=http://<api-host>:<port>` (Docker substitutes service aliases).
 
-Substitution scopes include **`{{ options.*}}`** for declared template options,
+Substitution scopes include **`{{ vars.*}}`** for declared template vars,
 plus **`{{ app.name }}`** / **`{{ app.slug }}`** (from the Partrocks application
 name — **`slug`** is derived automatically).
 
-## Options
+## Vars
 
 | id                 | type     | default  | notes                                                 |
 | ------------------ | -------- | -------- | ----------------------------------------------------- |
@@ -68,10 +68,10 @@ name — **`slug`** is derived automatically).
 | `databasePassword` | string   | `app`    | Develop-only Postgres password. **Not used in prod.** |
 
 **Application identity:** `APP_NAME` uses **`{{ app.name }}`** (and **`{{ app.slug }}`**
-is available for slug-shaped identifiers). Those are **not** template options;
+is available for slug-shaped identifiers). Those are **not** template vars;
 they come from the Partrocks application record when the template is evaluated.
 
-The develop `DATABASE_URL` uses **`{{ options.*}}`**; cloud `DATABASE_URL` is resolved from `primary-db.connectionString`
+The develop `DATABASE_URL` uses **`{{ vars.*}}`**; cloud `DATABASE_URL` is resolved from `primary-db.connectionString`
 at apply time, so cloud callers don't need to reason about user/password here.
 
 ## Layout
@@ -79,7 +79,7 @@ at apply time, so cloud callers don't need to reason about user/password here.
 ```
 0.1.0/
 ├── manifest.yaml
-├── options.yaml
+├── vars.yaml
 ├── codebases.yaml
 ├── develop.yaml
 ├── deploy.yaml

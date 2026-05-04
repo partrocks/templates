@@ -1,4 +1,4 @@
-options:
+vars:
   databaseName:
     id: databaseName
     label: Postgres database name

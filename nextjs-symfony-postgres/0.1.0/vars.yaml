@@ -1,12 +1,14 @@
 # ---------------------------------------------------------------------------
-# Options — caller-tunable knobs. `{{ options.* }}` refers to resolved values below.
-# String defaults may use `{{ app.name }}`, `{{ app.slug }}`, earlier options,
+# Vars — caller-tunable knobs. `{{ vars.* }}` refers to resolved values below.
+# String defaults may use `{{ app.name }}`, `{{ app.slug }}`, earlier vars,
 # `manifest.*`, or develop `services.*` — substituted when the template instance is created.
 # ---------------------------------------------------------------------------
-options:
+vars:
   isGenericDbName:
     id: isGenericDbName
-    condition: options.databaseName == "generic"
+    type: boolean
+    internal: true
+    condition: vars.databaseName == "generic"
 
   databaseName:
     id: databaseName

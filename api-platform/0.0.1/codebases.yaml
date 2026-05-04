@@ -6,101 +6,117 @@ codebases:
       dependencies:
         - composer
       steps:
-        - id: scaffold-symfony-skeleton
+        scaffold-symfony-skeleton:
           run: composer create-project symfony/skeleton . --no-interaction
-        - id: scaffold-gitignore
+        add-gitignore:
           copy:
             from: api/.gitignore
             to: .gitignore
 
-        # Non Auth Artifacts
-        - id: copy-composer-manifest
+        # Non-auth baseline artifacts.
+        composer-manifest:
           copy:
             from: api/composer.json
             to: composer.json
-          when: options.withAuth == false
 
-        # Auth Artifacts
-        - id: copy-composer-auth-manifest
-          copy:
-            from: api/auth/composer.json
-            to: composer.json
-          when: options.withAuth == true
-        - id: copy-phpunit-auth
-          copy:
-            from: api/auth/phpunit.dist.xml
-            to: phpunit.xml.dist
-          when: options.withAuth == true
-
-        # Install Dependencies
-        - id: install
+        # Install dependencies.
+        composer-install:
           run: rm -f composer.lock symfony.lock && rm -rf vendor && (composer install --no-interaction --prefer-dist || composer install --no-interaction --prefer-dist)
-        - id: composer-rehydrate
+        composer-rehydrate:
           run: composer install --no-interaction --prefer-dist
           skipOnImport: false
-        - id: permissions
+        permissions:
           run: chmod +x bin/console
           skipOnImport: false
 
-        # Non Auth Config
-        - id: merge-src-noauth-fixtures
+        # Non-auth source defaults.
+        merge-src-noauth-fixtures:
           merge:
             from: api/noauth/src
             to: src
-          when: options.withAuth == false
 
-        # Auth Config
-        - id: copy-configpackages-yaml-auth
-          merge:
-            from: api/auth/config/packages
-            to: config/packages
-            overwrite: true
-          when: options.withAuth == true
-        - id: copy-config-routes-yaml-auth
-          merge:
-            from: api/auth/config/routes
-            to: config/routes
-            overwrite: true
-          when: options.withAuth == true
-        - id: copy-config-bundles-php-auth
-          copy:
-            from: api/auth/config/bundles.php
-            to: config/bundles.php
-          when: options.withAuth == true
-        - id: copy-config-reference-php-auth
-          copy:
-            from: api/auth/config/reference.php
-            to: config/reference.php
-          when: options.withAuth == true
-        - id: copy-migrations-auth
-          merge:
-            from: api/auth/migrations
-            to: migrations
-            overwrite: true
-          when: options.withAuth == true
-        - id: copy-templates-auth
-          merge:
-            from: api/auth/templates
-            to: templates
-            overwrite: true
-            substituteDelimiters: ["[[", "]]"]
-          when: options.withAuth == true
-        - id: copy-tests-auth
-          merge:
-            from: api/auth/tests
-            to: tests
-            overwrite: true
-          when: options.withAuth == true
-        - id: copy-src-auth
-          merge:
-            from: api/auth/src
-            to: src
-            overwrite: true
-          when: options.withAuth == true
-
-        # Cache warmup
-        - id: cache-warmup
+        # Cache warmup.
+        cache-warmup:
           run: php bin/console cache:warmup --env=dev --no-interaction
           skipOnImport: false
+      stepOrder:
+        - scaffold-symfony-skeleton
+        - add-gitignore
+        - composer-manifest
+        - composer-install
+        - composer-rehydrate
+        - permissions
+        - merge-src-noauth-fixtures
+        - cache-warmup
       workingPath: /app
       outputPath: /app
+
+when@withAuth:
+  codebases:
+    api:
+      build:
+        steps:
+          copy-composer-auth-manifest:
+            copy:
+              from: api/auth/composer.json
+              to: composer.json
+          copy-phpunit-auth:
+            copy:
+              from: api/auth/phpunit.dist.xml
+              to: phpunit.xml.dist
+          copy-configpackages-yaml-auth:
+            merge:
+              from: api/auth/config/packages
+              to: config/packages
+              overwrite: true
+          copy-config-routes-yaml-auth:
+            merge:
+              from: api/auth/config/routes
+              to: config/routes
+              overwrite: true
+          copy-config-bundles-php-auth:
+            copy:
+              from: api/auth/config/bundles.php
+              to: config/bundles.php
+          copy-config-reference-php-auth:
+            copy:
+              from: api/auth/config/reference.php
+              to: config/reference.php
+          copy-migrations-auth:
+            merge:
+              from: api/auth/migrations
+              to: migrations
+              overwrite: true
+          copy-templates-auth:
+            merge:
+              from: api/auth/templates
+              to: templates
+              overwrite: true
+              substituteDelimiters: ["[[", "]]"]
+          copy-tests-auth:
+            merge:
+              from: api/auth/tests
+              to: tests
+              overwrite: true
+          copy-src-auth:
+            merge:
+              from: api/auth/src
+              to: src
+              overwrite: true
+        stepOrder:
+          - scaffold-symfony-skeleton
+          - add-gitignore
+          - copy-composer-auth-manifest
+          - copy-phpunit-auth
+          - composer-install
+          - composer-rehydrate
+          - permissions
+          - copy-configpackages-yaml-auth
+          - copy-config-routes-yaml-auth
+          - copy-config-bundles-php-auth
+          - copy-config-reference-php-auth
+          - copy-migrations-auth
+          - copy-templates-auth
+          - copy-tests-auth
+          - copy-src-auth
+          - cache-warmup

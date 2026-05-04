@@ -15,11 +15,11 @@ environments:
             target: /var/lib/postgresql/data
         environment:
           - name: POSTGRES_USER
-            value: "{{ options.databaseUser }}"
+            value: "{{ vars.databaseUser }}"
           - name: POSTGRES_PASSWORD
-            value: "{{ options.databasePassword }}"
+            value: "{{ vars.databasePassword }}"
           - name: POSTGRES_DB
-            value: "{{ options.databaseName }}"
+            value: "{{ vars.databaseName }}"
 
       mailpit:
         image: axllent/mailpit:latest
@@ -57,7 +57,7 @@ environments:
           - name: APP_NAME
             value: "{{ app.name }}"
           - name: DATABASE_URL
-            value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
+            value: "postgresql://{{ vars.databaseUser }}:{{ vars.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ vars.databaseName }}?serverVersion=16&charset=utf8"
           - name: MAILER_DSN
             value: "smtp://{{ services.mailpit.hostname }}:{{ services.mailpit.ports.smtp.container }}"
           - name: APP_FIXTURE_ADMIN_EMAIL
@@ -65,14 +65,14 @@ environments:
           - name: APP_FIXTURE_ADMIN_PASSWORD
             value: "password"
           - name: JWT_SECRET_KEY
-            when: options.withAuth == true
+            when: vars.withAuth == true
             value: >-
               dev-only-insecure-hmac-secret-min-32-chars-do-not-reuse-in-prod
           - name: JWT_ACCESS_TTL
-            when: options.withAuth == true
+            when: vars.withAuth == true
             value: "3600"
           - name: JWT_REFRESH_TTL
-            when: options.withAuth == true
+            when: vars.withAuth == true
             value: "604800"
         actions:
           clear-cache:

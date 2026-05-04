@@ -17,39 +17,48 @@ codebases:
       dependencies:
         - npm
       steps:
-        - id: scaffold-package-json
+        scaffold-package-json:
           copy:
             from: web/package.json
             to: package.json
-        - id: scaffold-next-config
+        scaffold-next-config:
           copy:
             from: web/next.config.mjs
             to: next.config.mjs
-        - id: scaffold-tsconfig
+        scaffold-tsconfig:
           copy:
             from: web/tsconfig.json
             to: tsconfig.json
         # Use [[ ]] delimiters so default {{ }} scanning does not interact with
         # JSX (e.g. style={{ ... }}). Substitutions are unused in these files today.
-        - id: scaffold-layout
+        scaffold-layout:
           copy:
             from: web/app/layout.tsx
             to: app/layout.tsx
             substituteDelimiters: ["[[", "]]"]
-        - id: scaffold-page
+        scaffold-page:
           copy:
             from: web/app/page.tsx
             to: app/page.tsx
             substituteDelimiters: ["[[", "]]"]
-        - id: scaffold-gitignore
+        scaffold-gitignore:
           copy:
             from: web/.gitignore
             to: .gitignore
-        - id: install
+        install:
           run: npm install
           skipOnImport: false
-        - id: build
+        build:
           run: npm run build
+      stepOrder:
+        - scaffold-package-json
+        - scaffold-next-config
+        - scaffold-tsconfig
+        - scaffold-layout
+        - scaffold-page
+        - scaffold-gitignore
+        - install
+        - build
       # Artifact lives under `/app/.next`; narrow the default workspace output.
       outputPath: /app/.next
 
@@ -60,47 +69,60 @@ codebases:
       dependencies:
         - composer
       steps:
-        - id: scaffold-symfony-skeleton
+        scaffold-symfony-skeleton:
           run: composer create-project symfony/skeleton . --no-interaction
-        - id: scaffold-gitignore
+        scaffold-gitignore:
           copy:
             from: api/.gitignore
             to: .gitignore
-        - id: copy-composer-manifest
+        copy-composer-manifest:
           copy:
             from: api/composer.json
             to: composer.json
-        - id: install
+        install:
           run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
-        - id: composer-rehydrate
+        composer-rehydrate:
           run: composer install --no-interaction --prefer-dist
           skipOnImport: false
-        - id: permissions
+        permissions:
           run: chmod +x bin/console
           skipOnImport: false
-        - id: copy-landing-controller
+        copy-landing-controller:
           copy:
             from: api/src/Controller/LandingController.php
             to: src/Controller/LandingController.php
-        - id: copy-quote-entity
+        copy-quote-entity:
           copy:
             from: api/src/Entity/Quote.php
             to: src/Entity/Quote.php
-        - id: copy-migration
+        copy-migration:
           copy:
             from: api/migrations/Version20260503142737.php
             to: migrations/Version20260503142737.php
-        - id: copy-app-fixtures
+        copy-app-fixtures:
           copy:
             from: api/src/DataFixtures/AppFixtures.php
             to: src/DataFixtures/AppFixtures.php
-        - id: copy-landing-twig
+        copy-landing-twig:
           copy:
             from: api/templates/landing.html.twig
             to: templates/landing.html.twig
             substituteDelimiters: ["[[", "]]"]
-        - id: cache-warmup
+        cache-warmup:
           run: php bin/console cache:warmup --env=dev --no-interaction
           skipOnImport: false
+      stepOrder:
+        - scaffold-symfony-skeleton
+        - scaffold-gitignore
+        - copy-composer-manifest
+        - install
+        - composer-rehydrate
+        - permissions
+        - copy-landing-controller
+        - copy-quote-entity
+        - copy-migration
+        - copy-app-fixtures
+        - copy-landing-twig
+        - cache-warmup
       workingPath: /app
       outputPath: /app

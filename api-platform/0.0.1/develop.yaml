@@ -106,3 +106,5 @@ when@withAuth:
               value: "smtp://{{ services.mailpit.hostname }}:{{ services.mailpit.ports.smtp.container }}"
             - name: MAILER_FROM
               value: "noreply@{{ app.name }}.dev"
+            - name: APP_FRONTEND_RESET_URL
+              value: "{{ vars.passwordResetPageUrl }}"

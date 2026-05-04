@@ -8,10 +8,17 @@ vars:
 
   withAuth:
     id: withAuth
-    label: Use Auth System?
+    label: Use JWT Authentication?
     type: boolean
     required: true
     default: false
+
+  passwordResetPageUrl:
+    id: passwordResetPageUrl
+    label: Redirect URL after password reset
+    type: string
+    required: false
+    default: "http://localhost:3000/auth/reset-password"
 
   databaseUser:
     id: databaseUser

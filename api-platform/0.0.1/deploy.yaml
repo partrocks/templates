@@ -57,3 +57,5 @@ when@withAuth:
               value: "5"
             - name: AUTH_LOGIN_LOCK_MINUTES
               value: "15"
+            - name: APP_FRONTEND_RESET_URL
+              value: "{{ vars.passwordResetPageUrl }}"

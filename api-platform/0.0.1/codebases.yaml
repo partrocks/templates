@@ -52,6 +52,57 @@ codebases:
       workingPath: /app
       outputPath: /app
 
+when@withDashboard:
+  codebases:
+    dashboard:
+      path: ./apps/dashboard
+      build:
+        baseImage: node:20-bookworm
+        dependencies:
+          - npm
+        steps:
+          copy-package-json:
+            copy:
+              from: dashboard/package.json
+              to: package.json
+          copy-next-config:
+            copy:
+              from: dashboard/next.config.mjs
+              to: next.config.mjs
+          copy-tsconfig:
+            copy:
+              from: dashboard/tsconfig.json
+              to: tsconfig.json
+          copy-layout:
+            copy:
+              from: dashboard/app/layout.tsx
+              to: app/layout.tsx
+              substituteDelimiters: ["[[", "]]"]
+          copy-page:
+            copy:
+              from: dashboard/app/page.tsx
+              to: app/page.tsx
+              substituteDelimiters: ["[[", "]]"]
+          copy-gitignore:
+            copy:
+              from: dashboard/.gitignore
+              to: .gitignore
+          install:
+            run: npm install
+            skipOnImport: false
+          build:
+            run: npm run build
+        stepOrder:
+          - copy-package-json
+          - copy-next-config
+          - copy-tsconfig
+          - copy-layout
+          - copy-page
+          - copy-gitignore
+          - install
+          - build
+        outputPath: /app/.next
+
 when@withAuth:
   codebases:
     api:

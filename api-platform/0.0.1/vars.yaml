@@ -8,10 +8,18 @@ vars:
 
   withAuth:
     id: withAuth
-    label: Use JWT Authentication?
+    label: Add Auth Server?
     type: boolean
     required: true
     default: false
+
+  withDashboard:
+    id: withDashboard
+    label: Add Frontend Dashboard?
+    type: boolean
+    required: true
+    default: false
+    visibleWhen: vars.withAuth == true
 
   passwordResetPageUrl:
     id: passwordResetPageUrl

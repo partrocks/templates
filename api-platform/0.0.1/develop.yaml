@@ -58,6 +58,29 @@ environments:
           - load-fixtures
           - clear-cache
 
+when@withDashboard:
+  environments:
+    develop:
+      services:
+        dashboard:
+          codebaseId: dashboard
+          image: node:20-bookworm
+          ports:
+            http:
+              container: 3000
+              host: auto
+          dependsOn:
+            - api
+          command: "npm install"
+          entrypoint: "npm run dev"
+          environment:
+            - name: NODE_ENV
+              value: development
+            - name: NEXT_PUBLIC_API_URL
+              value: "http://{{ services.api.hostname }}:{{ services.api.ports.http.container }}"
+            - name: APP_NAME
+              value: "{{ app.name }}"
+
 when@withAuth:
   environments:
     develop:

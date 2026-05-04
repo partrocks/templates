@@ -97,11 +97,6 @@ codebases:
             to: src
             overwrite: true
           when: options.withAuth == true
-        - id: copy-dotenv-auth
-          copy:
-            from: api/auth/.env
-            to: .env
-          when: options.withAuth == true
 
         # Cache warmup
         - id: cache-warmup

@@ -83,6 +83,7 @@ codebases:
             from: api/auth/templates
             to: templates
             overwrite: true
+            substituteDelimiters: ["[[", "]]"]
           when: options.withAuth == true
         - id: copy-tests-auth
           merge:

@@ -17,21 +17,24 @@ vars:
     id: passwordResetPageUrl
     label: Redirect URL after password reset
     type: string
-    required: false
+    required: true
+    visibleWhen: vars.withAuth == true
     default: "http://localhost:3000/auth/reset-password"
 
   adminEmail:
     id: adminEmail
     label: Admin email
     type: string
-    required: false
+    required: true
+    visibleWhen: vars.withAuth == true
     default: "admin@example.com"
 
   adminPassword:
     id: adminPassword
     label: Admin password
     type: string
-    required: false
+    required: true
+    visibleWhen: vars.withAuth == true
     default: "passwordpassword"
 
   databaseUser:

@@ -21,23 +21,6 @@ environments:
           - name: POSTGRES_DB
             value: "{{ vars.databaseName }}"
 
-      mailpit:
-        image: axllent/mailpit:latest
-        ports:
-          smtp:
-            container: 1025
-            host: auto
-          ui:
-            container: 8025
-            host: auto
-        readiness:
-          port: 1025
-        environment:
-          - name: MP_SMTP_AUTH_ACCEPT_ANY
-            value: "1"
-          - name: MP_SMTP_AUTH_ALLOW_INSECURE
-            value: "1"
-
       api:
         codebaseId: api
         image: partrocks/nextjs-symfony-postgres-api:dev
@@ -64,16 +47,6 @@ environments:
             value: "admin@example.com"
           - name: APP_FIXTURE_ADMIN_PASSWORD
             value: "password"
-          - name: JWT_SECRET_KEY
-            when: vars.withAuth == true
-            value: >-
-              dev-only-insecure-hmac-secret-min-32-chars-do-not-reuse-in-prod
-          - name: JWT_ACCESS_TTL
-            when: vars.withAuth == true
-            value: "3600"
-          - name: JWT_REFRESH_TTL
-            when: vars.withAuth == true
-            value: "604800"
         actions:
           clear-cache:
             label: Clear cache
@@ -91,3 +64,43 @@ environments:
           - migrate
           - load-fixtures
           - clear-cache
+
+when@withAuth:
+  environments:
+    develop:
+      services:
+        mailpit:
+          image: axllent/mailpit:latest
+          ports:
+            smtp:
+              container: 1025
+              host: auto
+            ui:
+              container: 8025
+              host: auto
+          readiness:
+            port: 1025
+          environment:
+            - name: MP_SMTP_AUTH_ACCEPT_ANY
+              value: "1"
+            - name: MP_SMTP_AUTH_ALLOW_INSECURE
+              value: "1"
+        api:
+          environment:
+            - name: JWT_SECRET_KEY
+              value: >-
+                dev-only-insecure-hmac-secret-min-32-chars-do-not-reuse-in-prod
+            - name: JWT_ACCESS_TTL
+              value: "3600"
+            - name: JWT_REFRESH_TTL
+              value: "604800"
+            - name: AUTH_LOGIN_LIMIT
+              value: "30"
+            - name: AUTH_REGISTER_LIMIT
+              value: "10"
+            - name: AUTH_RESET_REQUEST_LIMIT
+              value: "5"
+            - name: AUTH_LOGIN_LOCK_THRESHOLD
+              value: "5"
+            - name: AUTH_LOGIN_LOCK_MINUTES
+              value: "15"

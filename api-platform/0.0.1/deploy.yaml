@@ -34,12 +34,26 @@ environments:
             fromSecret: api_app_secret
           - name: MAILER_DSN
             fromSecret: api_mailer_dsn
-          - name: JWT_SECRET_KEY
-            when: vars.withAuth == true
-            fromSecret: api_jwt_secret
-          - name: JWT_ACCESS_TTL
-            when: vars.withAuth == true
-            value: "3600"
-          - name: JWT_REFRESH_TTL
-            when: vars.withAuth == true
-            value: "604800"
+
+when@withAuth:
+  environments:
+    cloud:
+      slots:
+        api-host:
+          env:
+            - name: JWT_SECRET_KEY
+              fromSecret: api_jwt_secret
+            - name: JWT_ACCESS_TTL
+              value: "3600"
+            - name: JWT_REFRESH_TTL
+              value: "604800"
+            - name: AUTH_LOGIN_LIMIT
+              value: "30"
+            - name: AUTH_REGISTER_LIMIT
+              value: "10"
+            - name: AUTH_RESET_REQUEST_LIMIT
+              value: "5"
+            - name: AUTH_LOGIN_LOCK_THRESHOLD
+              value: "5"
+            - name: AUTH_LOGIN_LOCK_MINUTES
+              value: "15"

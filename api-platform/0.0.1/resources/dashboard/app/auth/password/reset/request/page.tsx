@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
-import { ApiError, createApiService } from "@/lib/api";
-
 import { AuthSplitLayout } from "../../../../components/auth-split-layout";
 import {
     errorStyle,
@@ -24,12 +22,20 @@ export default function PasswordResetRequestPage() {
         setError(null);
         setSubmitting(true);
         try {
-            const api = createApiService();
-            await api.requestPasswordReset({ email });
+            const res = await fetch("/api/auth/password/reset/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+            const data = (await res.json()) as { message?: string };
+            if (!res.ok) {
+                setError(data.message ?? "Could not send reset email.");
+                return;
+            }
             setDone(true);
         } catch (err) {
             const message =
-                err instanceof ApiError
+                err instanceof Error
                     ? err.message
                     : "Could not send reset email.";
             setError(message);

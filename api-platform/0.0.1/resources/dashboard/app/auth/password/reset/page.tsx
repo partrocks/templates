@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
 
-import { ApiError, createApiService } from "@/lib/api";
-
 import { AuthSplitLayout } from "../../../components/auth-split-layout";
 import {
     errorStyle,
@@ -34,19 +32,21 @@ function PasswordResetCompleteForm() {
         setError(null);
         setSubmitting(true);
         try {
-            const api = createApiService();
-            await api.completePasswordReset({
-                selector,
-                token,
-                password,
+            const res = await fetch("/api/auth/password/reset", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ selector, token, password }),
             });
+            const data = (await res.json()) as { message?: string };
+            if (!res.ok) {
+                setError(data.message ?? "Could not reset password.");
+                return;
+            }
             router.replace("/auth/password/reset/confirm");
         } catch (err) {
-            const message =
-                err instanceof ApiError
-                    ? err.message
-                    : "Could not reset password.";
-            setError(message);
+            setError(
+                err instanceof Error ? err.message : "Could not reset password.",
+            );
         } finally {
             setSubmitting(false);
         }

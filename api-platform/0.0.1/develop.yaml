@@ -32,7 +32,6 @@ environments:
             host: auto
         dependsOn:
           - db
-          - mailpit
         entrypoint: "php -S 0.0.0.0:{{ services.api.ports.http.container }} -t public"
         environment:
           - name: APP_ENV
@@ -84,6 +83,8 @@ when@withAuth:
             - name: MP_SMTP_AUTH_ALLOW_INSECURE
               value: "1"
         api:
+          dependsOn:
+            - mailpit
           environment:
             - name: JWT_SECRET_KEY
               value: >-

@@ -105,4 +105,4 @@ when@withAuth:
             - name: MAILER_DSN
               value: "smtp://{{ services.mailpit.hostname }}:{{ services.mailpit.ports.smtp.container }}"
             - name: MAILER_FROM
-              value: "{{ vars.mailerFrom }}"
+              value: "noreply@{{ app.name }}.dev"

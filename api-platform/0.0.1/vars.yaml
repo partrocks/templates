@@ -13,14 +13,6 @@ vars:
     required: true
     default: false
 
-  mailerFrom:
-    id: mailerFrom
-    label: Email Sender Address
-    type: string
-    required: false
-    hidden: true
-    default: "noreply@{{ app.name }}.dev"
-
   databaseUser:
     id: databaseUser
     label: Postgres user (develop only)

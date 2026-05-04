@@ -4,7 +4,9 @@ import type {
     LoginBody,
     MeResponse,
     PasswordResetCompleteBody,
+    PasswordResetCompleteResponse,
     PasswordResetRequestBody,
+    PasswordResetRequestResponse,
     RefreshBody,
     RegisterBody,
 } from "./types";
@@ -27,6 +29,19 @@ async function readJsonSafely(response: Response): Promise<unknown> {
     } catch {
         return text;
     }
+}
+
+function parseApiErrorMessage(body: unknown): string | null {
+    if (
+        typeof body === "object" &&
+        body !== null &&
+        "message" in body &&
+        typeof (body as { message: unknown }).message === "string"
+    ) {
+        const trimmed = (body as { message: string }).message.trim();
+        return trimmed.length > 0 ? trimmed : null;
+    }
+    return null;
 }
 
 export class ApiService {
@@ -59,19 +74,16 @@ export class ApiService {
             method: options.method,
             headers,
             body: options.body,
+            // Avoid Next caching GET /me (and similar) keyed only by URL — ignores Bearer token.
+            cache: "no-store",
         });
 
         const responseBody = await readJsonSafely(response);
 
         if (!response.ok) {
             const message =
-                typeof responseBody === "object" &&
-                responseBody !== null &&
-                "message" in responseBody &&
-                typeof (responseBody as { message: unknown }).message ===
-                    "string"
-                    ? (responseBody as { message: string }).message
-                    : `Request failed (${response.status})`;
+                parseApiErrorMessage(responseBody) ??
+                `Request failed (${response.status})`;
             throw new ApiError(message, response.status, responseBody);
         }
 
@@ -130,36 +142,43 @@ export class ApiService {
     /** POST /auth/password/reset/request */
     async requestPasswordReset(
         body: PasswordResetRequestBody,
-    ): Promise<unknown> {
-        return this.requestJson<unknown>("/auth/password/reset/request", {
-            method: "POST",
-            body: JSON.stringify(body),
-        });
+    ): Promise<PasswordResetRequestResponse> {
+        return this.requestJson<PasswordResetRequestResponse>(
+            "/auth/password/reset/request",
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+            },
+        );
     }
 
     /** POST /auth/password/reset */
     async completePasswordReset(
         body: PasswordResetCompleteBody,
-    ): Promise<unknown> {
-        return this.requestJson<unknown>("/auth/password/reset", {
-            method: "POST",
-            body: JSON.stringify(body),
-        });
+    ): Promise<PasswordResetCompleteResponse> {
+        return this.requestJson<PasswordResetCompleteResponse>(
+            "/auth/password/reset",
+            {
+                method: "POST",
+                body: JSON.stringify(body),
+            },
+        );
     }
 }
 
 /**
- * Creates an ApiService using `NEXT_PUBLIC_API_URL` unless `baseUrl` is passed.
- * Trailing slashes on the base URL are stripped.
+ * Creates an ApiService using `baseUrl`, or `API_URL` (server-only, e.g. Docker
+ * internal hostname), or `NEXT_PUBLIC_API_URL`. Trailing slashes are stripped.
  */
 export function createApiService(
     options?: Partial<ApiServiceConfig>,
 ): ApiService {
-    const fromEnv = process.env.NEXT_PUBLIC_API_URL?.trim();
+    const fromEnv =
+        process.env.API_URL?.trim() ?? process.env.NEXT_PUBLIC_API_URL?.trim();
     const baseUrl = options?.baseUrl?.trim() ?? fromEnv;
     if (!baseUrl) {
         throw new Error(
-            "ApiService requires baseUrl or NEXT_PUBLIC_API_URL to be set",
+            "ApiService requires baseUrl, API_URL, or NEXT_PUBLIC_API_URL",
         );
     }
     return new ApiService({

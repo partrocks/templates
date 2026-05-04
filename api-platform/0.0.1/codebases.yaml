@@ -34,7 +34,7 @@ codebases:
 
         # Install Dependencies
         - id: install
-          run: rm -f composer.lock symfony.lock && rm -rf vendor && composer install --no-interaction --prefer-dist
+          run: rm -f composer.lock symfony.lock && rm -rf vendor && (composer install --no-interaction --prefer-dist || composer install --no-interaction --prefer-dist)
         - id: composer-rehydrate
           run: composer install --no-interaction --prefer-dist
           skipOnImport: false

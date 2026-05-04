@@ -56,10 +56,6 @@ environments:
             value: dev
           - name: APP_NAME
             value: "{{ app.name }}"
-          - name: APP_FIXTURE_ADMIN_EMAIL
-            value: admin@example.com
-          - name: APP_FIXTURE_ADMIN_PASSWORD
-            value: ChangeMe123456!
           - name: DATABASE_URL
             value: "postgresql://{{ options.databaseUser }}:{{ options.databasePassword }}@{{ services.db.hostname }}:{{ services.db.ports.db.container }}/{{ options.databaseName }}?serverVersion=16&charset=utf8"
           - name: MAILER_DSN

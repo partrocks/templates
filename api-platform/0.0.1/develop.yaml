@@ -117,7 +117,7 @@ when@withDashboard:
         api:
           environment:
             - name: APP_FRONTEND_RESET_URL
-              value: "http://{{ services.dashboard.hostname }}:{{ services.dashboard.ports.http.container }}/auth/reset-password"
+              value: "http://localhost:{{ services.dashboard.ports.http.host }}/auth/reset-password"
         dashboard:
           codebaseId: dashboard
           image: node:20-bookworm

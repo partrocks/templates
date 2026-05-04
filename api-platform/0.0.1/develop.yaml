@@ -105,6 +105,8 @@ when@withAuth:
               value: "noreply@{{ app.name }}.dev"
             - name: APP_FRONTEND_RESET_URL
               value: "no-frontend-url"
+            - name: CORS_ALLOW_ORIGIN
+              value: "^$"
             - name: APP_FIXTURE_ADMIN_EMAIL
               value: "{{ vars.adminEmail }}"
             - name: APP_FIXTURE_ADMIN_PASSWORD
@@ -118,6 +120,8 @@ when@withDashboard:
           environment:
             - name: APP_FRONTEND_RESET_URL
               value: "http://localhost:{{ services.dashboard.ports.http.host }}/auth/reset-password"
+            - name: CORS_ALLOW_ORIGIN
+              value: '^http://(localhost|127\.0\.0\.1):{{ services.dashboard.ports.http.host }}$'
         dashboard:
           codebaseId: dashboard
           image: node:20-bookworm

@@ -58,29 +58,6 @@ environments:
           - load-fixtures
           - clear-cache
 
-when@withDashboard:
-  environments:
-    develop:
-      services:
-        dashboard:
-          codebaseId: dashboard
-          image: node:20-bookworm
-          ports:
-            http:
-              container: 3000
-              host: auto
-          dependsOn:
-            - api
-          command: "npm install"
-          entrypoint: "npm run dev"
-          environment:
-            - name: NODE_ENV
-              value: development
-            - name: NEXT_PUBLIC_API_URL
-              value: "http://{{ services.api.hostname }}:{{ services.api.ports.http.container }}"
-            - name: APP_NAME
-              value: "{{ app.name }}"
-
 when@withAuth:
   environments:
     develop:
@@ -127,8 +104,35 @@ when@withAuth:
             - name: MAILER_FROM
               value: "noreply@{{ app.name }}.dev"
             - name: APP_FRONTEND_RESET_URL
-              value: "{{ vars.passwordResetPageUrl }}"
+              value: "no-frontend-url"
             - name: APP_FIXTURE_ADMIN_EMAIL
               value: "{{ vars.adminEmail }}"
             - name: APP_FIXTURE_ADMIN_PASSWORD
               value: "{{ vars.adminPassword }}"
+
+when@withDashboard:
+  environments:
+    develop:
+      services:
+        api:
+          environment:
+            - name: APP_FRONTEND_RESET_URL
+              value: "http://{{ services.dashboard.hostname }}:{{ services.dashboard.ports.http.container }}/auth/reset-password"
+        dashboard:
+          codebaseId: dashboard
+          image: node:20-bookworm
+          ports:
+            http:
+              container: 3000
+              host: auto
+          dependsOn:
+            - api
+          command: "npm install"
+          entrypoint: "npm run dev"
+          environment:
+            - name: NODE_ENV
+              value: development
+            - name: NEXT_PUBLIC_API_URL
+              value: "http://{{ services.api.hostname }}:{{ services.api.ports.http.container }}"
+            - name: APP_NAME
+              value: "{{ app.name }}"

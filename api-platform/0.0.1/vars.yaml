@@ -21,14 +21,6 @@ vars:
     default: false
     visibleWhen: vars.withAuth == true
 
-  passwordResetPageUrl:
-    id: passwordResetPageUrl
-    label: Redirect URL after password reset
-    type: string
-    required: true
-    visibleWhen: vars.withAuth == true
-    default: "http://localhost:3000/auth/reset-password"
-
   adminEmail:
     id: adminEmail
     label: Admin email

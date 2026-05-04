@@ -4,6 +4,10 @@
 # `manifest.*`, or develop `services.*` — substituted when the template instance is created.
 # ---------------------------------------------------------------------------
 options:
+  isGenericDbName:
+    id: isGenericDbName
+    condition: options.databaseName == "generic"
+
   databaseName:
     id: databaseName
     label: Postgres database name

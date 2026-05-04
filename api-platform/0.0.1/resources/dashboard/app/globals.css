@@ -1,0 +1,51 @@
+:root {
+    --bg: #0e1116;
+    --bg-elevated: #141922;
+    --bg-sidebar: #12161d;
+    --border: #252b35;
+    --text: #e8eaed;
+    --text-muted: #8b92a0;
+    --amber: #e5a54b;
+    --amber-dim: rgba(229, 165, 75, 0.14);
+    --green: #4ade80;
+    --green-dim: rgba(74, 222, 128, 0.12);
+    --green-border: rgba(74, 222, 128, 0.28);
+    --amber-border: rgba(229, 165, 75, 0.35);
+    --radius: 10px;
+    --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color-scheme: dark;
+}
+
+/* Light mode: set data-theme="light" on <html>. Dark uses the :root defaults above. */
+
+[data-theme="light"] {
+    --bg: #f0f2f6;
+    --bg-elevated: #ffffff;
+    --bg-sidebar: #e8ebf1;
+    --border: #d5dbe6;
+    --text: #111827;
+    --text-muted: #5b6475;
+    --amber: #b45309;
+    --amber-dim: rgba(180, 83, 9, 0.12);
+    --green: #15803d;
+    --green-dim: rgba(21, 128, 61, 0.12);
+    --green-border: rgba(21, 128, 61, 0.28);
+    --amber-border: rgba(180, 83, 9, 0.35);
+    color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}

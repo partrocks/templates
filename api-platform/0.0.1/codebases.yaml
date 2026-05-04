@@ -73,16 +73,16 @@ when@withDashboard:
             copy:
               from: dashboard/tsconfig.json
               to: tsconfig.json
-          copy-layout:
-            copy:
-              from: dashboard/app/layout.tsx
-              to: app/layout.tsx
-              substituteDelimiters: ["[[", "]]"]
-          copy-page:
-            copy:
-              from: dashboard/app/page.tsx
-              to: app/page.tsx
-              substituteDelimiters: ["[[", "]]"]
+          copy-app:
+            merge:
+              from: dashboard/app
+              to: app
+              overwrite: true
+          copy-lib:
+            merge:
+              from: dashboard/lib
+              to: lib
+              overwrite: true
           copy-gitignore:
             copy:
               from: dashboard/.gitignore
@@ -96,9 +96,9 @@ when@withDashboard:
           - copy-package-json
           - copy-next-config
           - copy-tsconfig
-          - copy-layout
-          - copy-page
           - copy-gitignore
+          - copy-app
+          - copy-lib
           - install
           - build
         outputPath: /app/.next

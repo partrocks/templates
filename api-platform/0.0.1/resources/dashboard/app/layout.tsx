@@ -1,24 +1,33 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import "./globals.css";
+
 export const metadata: Metadata = {
-    title: `[[ app.name ]] · PartRocks`,
-    description:
-        "PartRocks — Next.js frontend for the Symfony / API Platform template API.",
+    title: "Dashboard",
+    description: "Admin dashboard",
 };
+
+const themeBootstrap = `
+(function(){
+  try {
+    if (localStorage.getItem('dashboard-theme') === 'light') {
+      document.documentElement.setAttribute('data-theme','light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  } catch (e) {
+    document.documentElement.removeAttribute('data-theme');
+  }
+})();`;
 
 export default function RootLayout({
     children,
 }: Readonly<{ children: ReactNode }>) {
     return (
-        <html lang="en">
-            <body
-                style={{
-                    margin: 0,
-                    fontFamily:
-                        "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-                }}
-            >
+        <html lang="en" suppressHydrationWarning>
+            <body suppressHydrationWarning>
+                <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
                 {children}
             </body>
         </html>

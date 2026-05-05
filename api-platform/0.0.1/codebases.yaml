@@ -8,6 +8,8 @@ codebases:
       steps:
         scaffold-symfony-skeleton:
           run: composer create-project symfony/skeleton . --no-interaction
+
+        # Add gitignore file.
         add-gitignore-file:
           copy:
             from: api/.gitignore
@@ -169,12 +171,12 @@ when@withAuth:
               overwrite: true
         stepOrder:
           - scaffold-symfony-skeleton
-          - add-gitignore
+          - add-gitignore-file
           - copy-composer-auth-manifest
           - copy-phpunit-auth
           - composer-install
           - composer-rehydrate
-          - permissions
+          - modify-permissions
           - copy-configpackages-yaml-auth
           - copy-config-routes-yaml-auth
           - copy-config-bundles-php-auth

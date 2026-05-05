@@ -36,6 +36,11 @@ codebases:
             to: src
             overwrite: true
 
+        # Cleanup.
+        cleanup:
+          script:
+            path: scripts/api/cleanup.sh
+
         # Cache warmup.
         cache-warmup:
           run: php bin/console cache:warmup --env=dev --no-interaction
@@ -48,6 +53,7 @@ codebases:
         - composer-rehydrate
         - permissions
         - merge-src-noauth-fixtures
+        - cleanup
         - cache-warmup
       workingPath: /app
       outputPath: /app
@@ -90,6 +96,9 @@ when@withDashboard:
           install:
             run: npm install
             skipOnImport: false
+          cleanup:
+            script:
+              path: scripts/dashboard/cleanup.sh
           build:
             run: npm run build
         stepOrder:
@@ -100,6 +109,7 @@ when@withDashboard:
           - copy-app
           - copy-lib
           - install
+          - cleanup
           - build
         outputPath: /app/.next
 

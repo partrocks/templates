@@ -8,13 +8,13 @@ codebases:
       steps:
         scaffold-symfony-skeleton:
           run: composer create-project symfony/skeleton . --no-interaction
-        add-gitignore:
+        add-gitignore-file:
           copy:
             from: api/.gitignore
             to: .gitignore
 
         # Non-auth baseline artifacts.
-        composer-manifest:
+        add-composer-json-file:
           copy:
             from: api/composer.json
             to: composer.json
@@ -25,19 +25,21 @@ codebases:
         composer-rehydrate:
           run: composer install --no-interaction --prefer-dist
           skipOnImport: false
-        permissions:
+
+        # Modify permissions.
+        modify-permissions:
           run: chmod +x bin/console
           skipOnImport: false
 
         # Non-auth source defaults.
-        merge-src-noauth-fixtures:
+        adding-fixtures:
           merge:
             from: api/noauth/src
             to: src
             overwrite: true
 
         # Cleanup.
-        cleanup:
+        final-cleanup:
           script:
             path: scripts/api/cleanup.sh
 
@@ -47,13 +49,13 @@ codebases:
           skipOnImport: false
       stepOrder:
         - scaffold-symfony-skeleton
-        - add-gitignore
-        - composer-manifest
+        - add-gitignore-file
+        - add-composer-json-file
         - composer-install
         - composer-rehydrate
-        - permissions
-        - merge-src-noauth-fixtures
-        - cleanup
+        - modify-permissions
+        - adding-fixtures
+        - final-cleanup
         - cache-warmup
       workingPath: /app
       outputPath: /app
@@ -79,12 +81,12 @@ when@withDashboard:
             copy:
               from: dashboard/tsconfig.json
               to: tsconfig.json
-          copy-app:
+          copy-application-files:
             merge:
               from: dashboard/app
               to: app
               overwrite: true
-          copy-lib:
+          copy-library-files:
             merge:
               from: dashboard/lib
               to: lib
@@ -93,24 +95,24 @@ when@withDashboard:
             copy:
               from: dashboard/.gitignore
               to: .gitignore
-          install:
+          npm-install:
             run: npm install
             skipOnImport: false
-          cleanup:
+          final-cleanup:
             script:
               path: scripts/dashboard/cleanup.sh
-          build:
+          npm-build:
             run: npm run build
         stepOrder:
           - copy-package-json
           - copy-next-config
           - copy-tsconfig
           - copy-gitignore
-          - copy-app
-          - copy-lib
-          - install
-          - cleanup
-          - build
+          - copy-application-files
+          - copy-library-files
+          - npm-install
+          - final-cleanup
+          - npm-build
         outputPath: /app/.next
 
 when@withAuth:

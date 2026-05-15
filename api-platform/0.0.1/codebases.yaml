@@ -52,6 +52,11 @@ codebases:
             to: src
             overwrite: true
 
+        copy-test-doctrine-sqlite:
+          copy:
+            from: api/baseline/config/packages/test/doctrine.yaml
+            to: config/packages/test/doctrine.yaml
+
         # Cleanup.
         final-cleanup:
           script:
@@ -72,6 +77,7 @@ codebases:
         - sanitize-phpunit-secrets
         - modify-permissions
         - adding-fixtures
+        - copy-test-doctrine-sqlite
         - final-cleanup
         - cache-warmup
       workingPath: /app
@@ -198,4 +204,5 @@ when@withAuth:
           - copy-templates-auth
           - copy-tests-auth
           - copy-src-auth
+          - copy-test-doctrine-sqlite
           - cache-warmup

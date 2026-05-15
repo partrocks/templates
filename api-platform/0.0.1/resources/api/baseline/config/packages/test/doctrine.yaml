@@ -1,0 +1,6 @@
+# Test env uses SQLite so PHPUnit does not require a separate Postgres database
+# (develop Postgres only creates POSTGRES_DB / e.g. "app", while Doctrine's
+# dbname_suffix makes the test default "app_test", which does not exist).
+doctrine:
+    dbal:
+        url: 'sqlite:///%kernel.project_dir%/var/test.sqlite'

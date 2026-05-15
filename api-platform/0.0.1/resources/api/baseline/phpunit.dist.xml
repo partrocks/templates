@@ -13,6 +13,8 @@
     <php>
         <ini name="display_errors" value="1" />
         <ini name="error_reporting" value="-1" />
+        <!-- PHPUnit <server> does not set $_ENV; Dotenv::bootEnv would otherwise load APP_ENV=dev from .env. -->
+        <env name="APP_ENV" value="test" force="true" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>

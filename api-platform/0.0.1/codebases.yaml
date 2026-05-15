@@ -130,6 +130,9 @@ when@withAuth:
             copy:
               from: api/auth/phpunit.dist.xml
               to: phpunit.xml.dist
+          sanitize-phpunit-secrets:
+            script:
+              path: scripts/api/sanitize-phpunit-secrets.sh
           copy-configpackages-yaml-auth:
             merge:
               from: api/auth/config/packages
@@ -176,6 +179,7 @@ when@withAuth:
           - copy-phpunit-auth
           - composer-install
           - composer-rehydrate
+          - sanitize-phpunit-secrets
           - modify-permissions
           - copy-configpackages-yaml-auth
           - copy-config-routes-yaml-auth

@@ -28,6 +28,18 @@ codebases:
           run: composer install --no-interaction --prefer-dist
           skipOnImport: false
 
+        copy-phpunit-config:
+          copy:
+            from: api/baseline/phpunit.dist.xml
+            to: phpunit.xml.dist
+        copy-phpunit-bootstrap:
+          copy:
+            from: api/baseline/tests/bootstrap.php
+            to: tests/bootstrap.php
+        sanitize-phpunit-secrets:
+          script:
+            path: scripts/api/sanitize-phpunit-secrets.sh
+
         # Modify permissions.
         modify-permissions:
           run: chmod +x bin/console
@@ -55,6 +67,9 @@ codebases:
         - add-composer-json-file
         - composer-install
         - composer-rehydrate
+        - copy-phpunit-config
+        - copy-phpunit-bootstrap
+        - sanitize-phpunit-secrets
         - modify-permissions
         - adding-fixtures
         - final-cleanup
@@ -126,13 +141,6 @@ when@withAuth:
             copy:
               from: api/auth/composer.json
               to: composer.json
-          copy-phpunit-auth:
-            copy:
-              from: api/auth/phpunit.dist.xml
-              to: phpunit.xml.dist
-          sanitize-phpunit-secrets:
-            script:
-              path: scripts/api/sanitize-phpunit-secrets.sh
           copy-configpackages-yaml-auth:
             merge:
               from: api/auth/config/packages
@@ -176,9 +184,10 @@ when@withAuth:
           - scaffold-symfony-skeleton
           - add-gitignore-file
           - copy-composer-auth-manifest
-          - copy-phpunit-auth
           - composer-install
           - composer-rehydrate
+          - copy-phpunit-config
+          - copy-phpunit-bootstrap
           - sanitize-phpunit-secrets
           - modify-permissions
           - copy-configpackages-yaml-auth
